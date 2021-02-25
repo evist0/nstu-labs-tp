@@ -8,7 +8,7 @@ import javax.swing.*;
 import java.util.Random;
 
 public class View extends JFrame {
-    private final JPanel _canvasPane = new CanvasPane();
+    private final CanvasPane _canvasPane = new CanvasPane();
     private final SettingsPane _settingsPane = new SettingsPane();
 
     public View() {

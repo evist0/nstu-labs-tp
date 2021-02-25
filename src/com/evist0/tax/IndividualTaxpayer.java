@@ -27,8 +27,6 @@ public class IndividualTaxpayer implements ITaxpayer {
         var _r = new Random();
         var imageIdx = _r.nextInt(4);
 
-        System.out.println(imageIdx);
-
         BufferedImage img;
         try {
             img = ImageIO.read(_images[imageIdx]);
