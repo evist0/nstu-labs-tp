@@ -50,4 +50,9 @@ public class View extends JFrame {
         _canvasPane.add(image);
         _canvasPane.repaint();
     }
+
+    public void clearTaxpayers() {
+        _canvasPane.removeAll();
+        _canvasPane.repaint();
+    }
 }

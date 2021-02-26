@@ -1,7 +1,6 @@
 package com.evist0.views.components;
 
 import javax.swing.*;
-import javax.swing.event.DocumentListener;
 import java.awt.*;
 
 public class JInput extends JPanel {
@@ -36,11 +35,7 @@ public class JInput extends JPanel {
         _label.setText(newLabel);
     }
 
-    public void addDocumentListener(DocumentListener l) {
-        this._textField.getDocument().addDocumentListener(l);
-    }
-
-    public void removeDocumentListener(DocumentListener l) {
-        this._textField.getDocument().removeDocumentListener(l);
+    public void setEnabled(boolean enabled) {
+        _textField.setEnabled(enabled);
     }
 }
