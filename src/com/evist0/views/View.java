@@ -5,15 +5,19 @@ import com.evist0.views.panels.CanvasPane;
 import com.evist0.views.panels.SettingsPane;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.Random;
 
 public class View extends JFrame {
     private final CanvasPane _canvasPane = new CanvasPane();
     private final SettingsPane _settingsPane = new SettingsPane();
+    private final JLabel _timerLabel = new JLabel();
 
     public View() {
         super("Взлом жёппы");
         setBounds(0, 0, 1280, 720);
+
+        _timerLabel.setFont(new Font("Calibri", Font.BOLD, 20));
 
         var splitPane = new JSplitPane();
         splitPane.setDividerLocation(1280 - 300);
@@ -31,6 +35,28 @@ public class View extends JFrame {
 
     public void showDialog(String message) {
         JOptionPane.showMessageDialog(null, message);
+    }
+
+    public void addTimerToCanvas() {
+        _timerLabel.setText("00:00:00");
+
+        var preferredSize = _timerLabel.getPreferredSize();
+
+        _timerLabel.setBounds(0, 0, preferredSize.width, preferredSize.height);
+        _canvasPane.addTimer(_timerLabel);
+    }
+
+    public void updateTimer(int newSeconds) {
+        var hours = newSeconds / 3600;
+        var minutes = (newSeconds % 3600) / 60;
+        var seconds = newSeconds % 60;
+
+        var timeString = String.format("%02d:%02d:%02d", hours, minutes, seconds);
+
+        _timerLabel.setText(timeString);
+        var preferredSize = _timerLabel.getPreferredSize();
+
+        _timerLabel.setBounds(0, 0, preferredSize.width, preferredSize.height);
     }
 
     public void drawTaxpayer(ITaxpayer taxpayer) {
@@ -51,7 +77,7 @@ public class View extends JFrame {
         _canvasPane.repaint();
     }
 
-    public void clearTaxpayers() {
+    public void clearCanvas() {
         _canvasPane.removeAll();
         _canvasPane.repaint();
     }

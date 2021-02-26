@@ -19,4 +19,10 @@ public class CanvasPane extends JLayeredPane {
 
         return comp;
     }
+
+    public void addTimer(Component comp) {
+        super.add(comp);
+        setLayer(comp, Integer.MAX_VALUE);
+        repaint();
+    }
 }

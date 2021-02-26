@@ -130,6 +130,8 @@ public class Controller {
     }
 
     private void start() {
+        _v.addTimerToCanvas();
+
         var factory = new Factory(_m);
 
         final int[] secondsPassed = {0};
@@ -139,6 +141,7 @@ public class Controller {
             @Override
             public void run() {
                 secondsPassed[0] += 1;
+                _v.updateTimer(secondsPassed[0]);
 
                 if (secondsPassed[0] % _m.get_N1() == 0) {
                     var taxpayer = factory.produceIndividual();
@@ -167,7 +170,7 @@ public class Controller {
     private void stop() {
         _t.cancel();
         _clip.stop();
-        _v.clearTaxpayers();
+        _v.clearCanvas();
     }
 
     private void showInputError(String fieldName) {
