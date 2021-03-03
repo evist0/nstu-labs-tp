@@ -1,14 +1,15 @@
-package com.evist0.tax;
+package com.evist0.tax.entity;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Random;
 
-public class IndividualTaxpayer implements ITaxpayer {
-    private final JLabel _image;
+public class IndividualTaxpayer extends AbstractTaxpayer {
+    public static int counter = 0;
 
     private final static File[] _images = new File[]{
             new File("assets/images/individual_0.jpg"),
@@ -17,27 +18,22 @@ public class IndividualTaxpayer implements ITaxpayer {
             new File("assets/images/individual_3.png"),
     };
 
-    @Override
-    public JLabel get_image() {
-        return _image;
+    public IndividualTaxpayer(int x, int y, Image image) {
+        super(x, y, image);
+        counter++;
     }
 
-    public IndividualTaxpayer() {
-        JLabel tmp;
+    public static Image getRandomImage() {
+        Image image = null;
         var _r = new Random();
         var imageIdx = _r.nextInt(4);
 
-        BufferedImage img;
         try {
-            img = ImageIO.read(_images[imageIdx]);
-            var icon = new ImageIcon(img);
-
-            tmp = new JLabel(icon);
+            image = ImageIO.read(_images[imageIdx]);
         } catch (IOException e) {
             e.printStackTrace();
-            tmp = new JLabel("404 individual not found");
         }
 
-        _image = tmp;
+        return image;
     }
 }

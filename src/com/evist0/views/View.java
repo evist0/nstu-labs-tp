@@ -1,17 +1,16 @@
 package com.evist0.views;
 
-import com.evist0.tax.ITaxpayer;
-import com.evist0.views.panels.CanvasPane;
-import com.evist0.views.panels.SettingsPane;
+import com.evist0.models.ResultModel;
+import com.evist0.tax.entity.AbstractTaxpayer;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Random;
+import java.util.ArrayList;
 
 public class View extends JFrame {
-    private final CanvasPane _canvasPane = new CanvasPane();
-    private final SettingsPane _settingsPane = new SettingsPane();
     private final JLabel _timerLabel = new JLabel();
+
+    private final Panel _panel = new Panel();
 
     public View() {
         super("Взлом жёппы");
@@ -19,31 +18,21 @@ public class View extends JFrame {
 
         _timerLabel.setFont(new Font("Calibri", Font.BOLD, 20));
 
-        var splitPane = new JSplitPane();
-        splitPane.setDividerLocation(1280 - 300);
-        setContentPane(splitPane);
-
-        splitPane.setLeftComponent(_canvasPane);
-        splitPane.setRightComponent(_settingsPane);
+        add(_timerLabel);
+        add(_panel);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
     }
 
-    public SettingsPane get_settingsPane() {
-        return _settingsPane;
+    public void taxpayersToPaint(ArrayList<AbstractTaxpayer> taxpayers) {
+        _panel.setTaxpayers(taxpayers);
+        _panel.repaint();
     }
 
-    public void showDialog(String message) {
-        JOptionPane.showMessageDialog(null, message);
-    }
+    public void toggleTimerVisibility() {
+        var timerVisible = _timerLabel.isVisible();
 
-    public void addTimerToCanvas() {
-        _timerLabel.setText("00:00:00");
-
-        var preferredSize = _timerLabel.getPreferredSize();
-
-        _timerLabel.setBounds(0, 0, preferredSize.width, preferredSize.height);
-        _canvasPane.addTimer(_timerLabel);
+        _timerLabel.setVisible(!timerVisible);
     }
 
     public void updateTimer(int newSeconds) {
@@ -59,26 +48,37 @@ public class View extends JFrame {
         _timerLabel.setBounds(0, 0, preferredSize.width, preferredSize.height);
     }
 
-    public void drawTaxpayer(ITaxpayer taxpayer) {
-        var image = taxpayer.get_image();
-        var availableArea = _canvasPane.getBounds();
+    public void showResultWindow(ResultModel result) {
+        JDialog dialog = new JDialog(this, "...", true);
+        JPanel panel = new JPanel(new GridLayout(5, 1));
 
-        var random = new Random();
+        JLabel messageLabel = new JLabel("Симуляция закончена.");
+        messageLabel.setFont(new Font("Comic Sans", Font.BOLD, 18));
 
-        var x = random.nextInt(availableArea.width);
-        var y = random.nextInt(availableArea.height);
+        JLabel individualLabel = new JLabel("Физических лиц: %d".formatted(result.get_individualCounter()));
+        individualLabel.setFont(new Font("Times", Font.ITALIC, 14));
+        individualLabel.setForeground(new Color(0xff0000));
 
-        var w = image.getIcon().getIconWidth();
-        var h = image.getIcon().getIconHeight();
 
-        image.setBounds(x, y, w, h);
+        JLabel companyLabel = new JLabel("Юрилических лиц: %d".formatted(result.get_companyCounter()));
+        companyLabel.setFont(new Font("Times", Font.ITALIC, 14));
+        companyLabel.setForeground(new Color(0x00ff00));
 
-        _canvasPane.add(image);
-        _canvasPane.repaint();
-    }
+        JLabel timeLabel = new JLabel("Времени затрачено: %d".formatted(result.get_timePassed()));
+        timeLabel.setFont(new Font("Times", Font.ITALIC, 14));
+        timeLabel.setForeground(new Color(0x0000ff));
 
-    public void clearCanvas() {
-        _canvasPane.removeAll();
-        _canvasPane.repaint();
+        panel.add(messageLabel);
+        panel.add(individualLabel);
+        panel.add(companyLabel);
+        panel.add(timeLabel);
+        dialog.add(panel);
+
+        dialog.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        dialog.setPreferredSize(new Dimension(500, 500));
+        dialog.setResizable(false);
+        dialog.pack();
+        dialog.setLocationRelativeTo(this);
+        dialog.setVisible(true);
     }
 }
