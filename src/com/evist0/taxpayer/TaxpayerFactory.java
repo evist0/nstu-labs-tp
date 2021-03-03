@@ -1,20 +1,18 @@
-package com.evist0.tax.factory;
+package com.evist0.taxpayer;
 
-import com.evist0.models.Model;
-import com.evist0.tax.entity.CompanyTaxpayer;
-import com.evist0.tax.entity.IndividualTaxpayer;
-import com.evist0.views.View;
+import com.evist0.application.AppModel;
+import com.evist0.application.AppView;
 
 import java.awt.*;
 import java.util.Random;
 
-public class Factory {
+public class TaxpayerFactory {
     private final Random _r;
-    private final Model _m;
+    private final AppModel _m;
 
     private final Rectangle availableArea;
 
-    public Factory(Model model, View view) {
+    public TaxpayerFactory(AppModel model, AppView view) {
         _r = new Random();
 
         _m = model;
@@ -22,7 +20,7 @@ public class Factory {
     }
 
     public IndividualTaxpayer produceIndividual() {
-        var P1 = _m.get_P1();
+        var P1 = _m.getP1();
 
         var generated = _r.nextDouble();
         var point = getRandomPoint();
@@ -36,7 +34,7 @@ public class Factory {
     }
 
     public CompanyTaxpayer produceCompany() {
-        var P2 = _m.get_P2();
+        var P2 = _m.getP2();
 
         var generated = _r.nextDouble();
         var point = getRandomPoint();
