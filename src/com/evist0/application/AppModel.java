@@ -5,13 +5,19 @@ import com.evist0.properties.ModelChangedEvent;
 import com.evist0.properties.Property;
 import com.evist0.taxpayer.AbstractTaxpayer;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 public class AppModel {
+    private boolean _timerVisible;
     private boolean _started;
 
     private int _N1, _N2;
     private float _P1, _P2;
+
+    private Long _timePassed;
+
+    private Rectangle _availableArea;
 
     private final ArrayList<AbstractTaxpayer> _taxpayers = new ArrayList<>();
 
@@ -86,6 +92,29 @@ public class AppModel {
     public void removeTaxpayer(AbstractTaxpayer taxpayer) {
         _taxpayers.remove(taxpayer);
         notifyListeners(Property.Taxpayers, _taxpayers);
+    }
+
+    public void setTimePassed(Long timePassed) {
+        _timePassed = timePassed;
+        notifyListeners(Property.TimePassed, _timePassed);
+    }
+
+    public Long getTimePassed() {
+        return _timePassed;
+    }
+
+    public void toggleTimerVisible() {
+        _timerVisible = !_timerVisible;
+
+        notifyListeners(Property.TimerVisibility, _timerVisible);
+    }
+
+    public void setAvailableArea(Rectangle availableArea) {
+        _availableArea = availableArea;
+    }
+
+    public Rectangle getAvailableArea() {
+        return _availableArea;
     }
 
     private <T> void notifyListeners(Property property, T value) {

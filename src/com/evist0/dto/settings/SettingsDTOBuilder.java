@@ -24,13 +24,13 @@ public class SettingsDTOBuilder {
         return this;
     }
 
-    public SettingsDTOBuilder setP1(float P1) {
+    public SettingsDTOBuilder setP1(Float P1) {
         this.P1 = P1;
 
         return this;
     }
 
-    public SettingsDTOBuilder setP2(float P2) {
+    public SettingsDTOBuilder setP2(Float P2) {
         this.P2 = P2;
 
         return this;

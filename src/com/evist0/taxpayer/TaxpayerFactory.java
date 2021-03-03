@@ -1,22 +1,16 @@
 package com.evist0.taxpayer;
 
 import com.evist0.application.AppModel;
-import com.evist0.application.AppView;
 
 import java.awt.*;
 import java.util.Random;
 
 public class TaxpayerFactory {
-    private final Random _r;
+    private final Random _r = new Random();
     private final AppModel _m;
 
-    private final Rectangle availableArea;
-
-    public TaxpayerFactory(AppModel model, AppView view) {
-        _r = new Random();
-
+    public TaxpayerFactory(AppModel model) {
         _m = model;
-        availableArea = view.getBounds();
     }
 
     public IndividualTaxpayer produceIndividual() {
@@ -49,8 +43,8 @@ public class TaxpayerFactory {
     }
 
     private Point getRandomPoint() {
-        int x = (int) (Math.random() * (availableArea.getWidth() - 99));
-        int y = (int) (Math.random() * (availableArea.getHeight() - 99));
+        int x = (int) (Math.random() * (_m.getAvailableArea().getWidth() - 99));
+        int y = (int) (Math.random() * (_m.getAvailableArea().getHeight() - 99));
         return new Point(x, y);
     }
 }

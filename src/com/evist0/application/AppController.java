@@ -1,44 +1,65 @@
 package com.evist0.application;
 
 import com.evist0.dto.settings.SettingsDTO;
+import com.evist0.taxpayer.TaxpayerFactory;
 
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import java.awt.*;
 import java.io.File;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class AppController {
     private final AppModel _model;
-    private Clip _clip;
+    private final Timer _timer = new Timer();
 
     public AppController(AppModel model) {
         _model = model;
-
-        var musicFile = new File("assets/music.wav");
-        try {
-            var ais = AudioSystem.getAudioInputStream(musicFile);
-
-            _clip = AudioSystem.getClip();
-            _clip.open(ais);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     public void start(SettingsDTO dto) {
-        _model.setN1(dto.N1);
-        _model.setN2(dto.N2);
-        _model.setP1(dto.P1);
-        _model.setP2(dto.P2);
+        var started = _model.getStarted();
 
-        _clip.setFramePosition(0);
-        _clip.loop(Clip.LOOP_CONTINUOUSLY);
+        if (!started) {
+            _model.setN1(dto.N1);
+            _model.setN2(dto.N2);
+            _model.setP1(dto.P1);
+            _model.setP2(dto.P2);
+            _model.setTimePassed(0L);
 
-        _model.setStarted(true);
+            _model.setStarted(true);
+
+            _timer.schedule(new TimerTask() {
+                TaxpayerFactory factory = new TaxpayerFactory(_model);
+
+                @Override
+                public void run() {
+                    var timePassed = _model.getTimePassed();
+
+                    if (timePassed % _model.getN1() == 0) {
+                        var taxpayer = factory.produceIndividual();
+
+                        if (taxpayer != null) {
+                            _model.addTaxpayer(taxpayer);
+                        }
+                    }
+
+                    if (timePassed % _model.getN2() == 0) {
+                        var taxpayer = factory.produceCompany();
+
+                        if (taxpayer != null) {
+                            _model.addTaxpayer(taxpayer);
+                        }
+                    }
+
+                    _model.setTimePassed(timePassed + 1);
+                }
+            }, 1000, 1000);
+        }
     }
 
     public void stop() {
-        _clip.stop();
-
         _model.setStarted(false);
     }
 
@@ -53,5 +74,10 @@ public class AppController {
     }
 
     public void toggleTimer() {
+        _model.toggleTimerVisible();
+    }
+
+    public void updateAvailableArea(Rectangle availableArea) {
+        _model.setAvailableArea(availableArea);
     }
 }

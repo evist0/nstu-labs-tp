@@ -40,7 +40,7 @@ public class Menubar extends JMenuBar {
 
     private void _initListeners(AppController controller) {
         _startItem.addActionListener((e) -> {
-            var dto = _view.settingsPane.getSettingsDTO();
+            var dto = _view.getSettingsDTO();
             controller.start(dto);
         });
 
