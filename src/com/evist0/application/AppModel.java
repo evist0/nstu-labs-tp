@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class AppModel {
     private boolean _timerVisible;
     private boolean _started;
-
+    private boolean _dialogVisible;
     private int _N1, _N2;
     private float _P1, _P2;
 
@@ -103,10 +103,21 @@ public class AppModel {
         return _timePassed;
     }
 
-    public void toggleTimerVisible() {
+    public void toggleTimer() {
         _timerVisible = !_timerVisible;
-
         notifyListeners(Property.TimerVisibility, _timerVisible);
+    }
+    public void setTimerVisble() {
+        _timerVisible = true;
+        notifyListeners(Property.TimerVisibility, true);
+    }
+    public void setTimerInvisible() {
+        _timerVisible = false;
+        notifyListeners(Property.TimerVisibility, false);
+    }
+    public void toggleDialogVisible(){
+        _dialogVisible=!_dialogVisible;
+        notifyListeners(Property.DialogVisibility, _dialogVisible);
     }
 
     public void setAvailableArea(Rectangle availableArea) {

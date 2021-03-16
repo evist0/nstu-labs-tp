@@ -3,10 +3,7 @@ package com.evist0.application;
 import com.evist0.dto.settings.SettingsDTO;
 import com.evist0.taxpayer.TaxpayerFactory;
 
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
 import java.awt.*;
-import java.io.File;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -61,6 +58,7 @@ public class AppController {
 
     public void stop() {
         _model.setStarted(false);
+        _timer.cancel();
     }
 
     public void toggleSimulation(SettingsDTO dto) {
@@ -74,8 +72,18 @@ public class AppController {
     }
 
     public void toggleTimer() {
-        _model.toggleTimerVisible();
+        _model.toggleTimer();
     }
+    public void setTimerVisible() {
+        _model.setTimerVisble();
+    }
+    public void setTimerInvisible() {
+        _model.setTimerInvisible();
+    }
+    public void toggleDialogVisible(){
+        _model.toggleDialogVisible();
+    }
+
 
     public void updateAvailableArea(Rectangle availableArea) {
         _model.setAvailableArea(availableArea);

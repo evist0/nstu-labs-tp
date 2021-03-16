@@ -31,6 +31,11 @@ public class AppView extends JFrame {
     private JButton startButton;
     private JLabel timerLabel;
 
+    private JCheckBox showInfoCheckBox;
+    private JRadioButton showTimeRadioButton;
+    private JRadioButton hideTimeRadioButton;
+
+
     public SettingsDTO getSettingsDTO() {
         var builder = new SettingsDTOBuilder()
                 .setN1(N1.getText())
@@ -118,7 +123,15 @@ public class AppView extends JFrame {
         settingsPanel.addMouseListener(blurListener);
 
         canvasPanel.addComponentListener(resizeListener);
-
+        showTimeRadioButton.addActionListener(e->{
+        controller.setTimerVisible();
+        });
+        hideTimeRadioButton.addActionListener(e->{
+            controller.setTimerInvisible();
+        });
+        showInfoCheckBox.addActionListener(e->{
+            controller.toggleDialogVisible();
+        });
         startButton.addActionListener(e -> {
             var dto = getSettingsDTO();
             controller.toggleSimulation(dto);
@@ -200,4 +213,5 @@ public class AppView extends JFrame {
     private float _getProbabilityFromModel(Object model) {
         return ((ProbabilityModel) model).getValue();
     }
+
 }
