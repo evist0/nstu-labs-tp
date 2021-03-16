@@ -74,11 +74,11 @@ public class AppController {
     public void toggleTimer() {
         _model.toggleTimer();
     }
-    public void toggleTimerVisible() {
-        _model.toggleTimerVisble();
+    public void setTimerVisible() {
+        _model.setTimerVisble();
     }
-    public void toggleTimerInvisible() {
-        _model.toggleTimerInvisible();
+    public void setTimerInvisible() {
+        _model.setTimerInvisible();
     }
     public void toggleDialogVisible(){
         _model.toggleDialogVisible();

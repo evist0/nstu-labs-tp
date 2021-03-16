@@ -20,6 +20,7 @@ public class AppView extends JFrame {
     private JPanel content;
     private JPanel canvasPanel;
     private JPanel settingsPanel;
+
     private JTextField N1;
     private JTextField N2;
 
@@ -29,8 +30,6 @@ public class AppView extends JFrame {
 
     private JButton startButton;
     private JLabel timerLabel;
-
-
 
     private JCheckBox showInfoCheckBox;
     private JRadioButton showTimeRadioButton;
@@ -125,10 +124,10 @@ public class AppView extends JFrame {
 
         canvasPanel.addComponentListener(resizeListener);
         showTimeRadioButton.addActionListener(e->{
-        controller.toggleTimerVisible();
+        controller.setTimerVisible();
         });
         hideTimeRadioButton.addActionListener(e->{
-            controller.toggleTimerInvisible();
+            controller.setTimerInvisible();
         });
         showInfoCheckBox.addActionListener(e->{
             controller.toggleDialogVisible();

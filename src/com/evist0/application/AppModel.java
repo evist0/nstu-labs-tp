@@ -107,11 +107,11 @@ public class AppModel {
         _timerVisible = !_timerVisible;
         notifyListeners(Property.TimerVisibility, _timerVisible);
     }
-    public void toggleTimerVisble() {
+    public void setTimerVisble() {
         _timerVisible = true;
         notifyListeners(Property.TimerVisibility, true);
     }
-    public void toggleTimerInvisible() {
+    public void setTimerInvisible() {
         _timerVisible = false;
         notifyListeners(Property.TimerVisibility, false);
     }
