@@ -43,9 +43,7 @@ public class Menubar extends JMenuBar {
             var dto = _view.getSettingsDTO();
             controller.start(dto);
         });
-
         _toggleTimerItem.addActionListener((e -> controller.toggleTimer()));
-
         _stopItem.addActionListener((e -> controller.stop()));
     }
 }

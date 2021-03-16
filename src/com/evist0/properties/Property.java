@@ -8,5 +8,6 @@ public enum Property {
     P2,
     Taxpayers,
     TimePassed,
-    TimerVisibility
+    TimerVisibility,
+    DialogVisibility
 }

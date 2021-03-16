@@ -20,7 +20,6 @@ public class AppView extends JFrame {
     private JPanel content;
     private JPanel canvasPanel;
     private JPanel settingsPanel;
-
     private JTextField N1;
     private JTextField N2;
 
@@ -30,6 +29,13 @@ public class AppView extends JFrame {
 
     private JButton startButton;
     private JLabel timerLabel;
+
+
+
+    private JCheckBox showInfoCheckBox;
+    private JRadioButton showTimeRadioButton;
+    private JRadioButton hideTimeRadioButton;
+
 
     public SettingsDTO getSettingsDTO() {
         var builder = new SettingsDTOBuilder()
@@ -118,7 +124,15 @@ public class AppView extends JFrame {
         settingsPanel.addMouseListener(blurListener);
 
         canvasPanel.addComponentListener(resizeListener);
-
+        showTimeRadioButton.addActionListener(e->{
+        controller.toggleTimerVisible();
+        });
+        hideTimeRadioButton.addActionListener(e->{
+            controller.toggleTimerInvisible();
+        });
+        showInfoCheckBox.addActionListener(e->{
+            controller.toggleDialogVisible();
+        });
         startButton.addActionListener(e -> {
             var dto = getSettingsDTO();
             controller.toggleSimulation(dto);
@@ -200,4 +214,5 @@ public class AppView extends JFrame {
     private float _getProbabilityFromModel(Object model) {
         return ((ProbabilityModel) model).getValue();
     }
+
 }
