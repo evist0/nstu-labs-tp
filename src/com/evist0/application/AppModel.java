@@ -9,26 +9,33 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class AppModel {
-    private boolean _timerVisible;
     private boolean _started;
-    private boolean _dialogVisible;
+    private Long _timePassed;
+
     private int _N1, _N2;
     private float _P1, _P2;
 
-    private Long _timePassed;
-
+    private final ArrayList<AbstractTaxpayer> _taxpayers = new ArrayList<>();
     private Rectangle _availableArea;
 
-    private final ArrayList<AbstractTaxpayer> _taxpayers = new ArrayList<>();
+    private boolean _timerVisible;
+    private boolean _dialogVisible;
+
+    private int _individualGenerated, _companyGenerated;
 
     private final ArrayList<ModelChangeListener> _listeners = new ArrayList<>();
 
     public AppModel() {
         _started = false;
+        _timePassed = 0L;
+
         _N1 = 1;
         _N2 = 1;
         _P1 = 1;
         _P2 = 1;
+
+        _timerVisible = false;
+        _dialogVisible = false;
     }
 
     public void addModelChangedListener(ModelChangeListener l) {
@@ -94,6 +101,11 @@ public class AppModel {
         notifyListeners(Property.Taxpayers, _taxpayers);
     }
 
+    public void resetTaxpayers() {
+        _taxpayers.clear();
+        notifyListeners(Property.Taxpayers, _taxpayers);
+    }
+
     public void setTimePassed(Long timePassed) {
         _timePassed = timePassed;
         notifyListeners(Property.TimePassed, _timePassed);
@@ -103,21 +115,22 @@ public class AppModel {
         return _timePassed;
     }
 
-    public void toggleTimer() {
-        _timerVisible = !_timerVisible;
+    public void setTimerVisible(boolean visible) {
+        _timerVisible = visible;
         notifyListeners(Property.TimerVisibility, _timerVisible);
     }
-    public void setTimerVisble() {
-        _timerVisible = true;
-        notifyListeners(Property.TimerVisibility, true);
+
+    public boolean getTimerVisible() {
+        return _timerVisible;
     }
-    public void setTimerInvisible() {
-        _timerVisible = false;
-        notifyListeners(Property.TimerVisibility, false);
+
+    public void setDialogVisible(boolean visible) {
+        _dialogVisible = visible;
+        notifyListeners(Property.ResultsVisibility, _dialogVisible);
     }
-    public void toggleDialogVisible(){
-        _dialogVisible=!_dialogVisible;
-        notifyListeners(Property.DialogVisibility, _dialogVisible);
+
+    public boolean getDialogVisible() {
+        return _dialogVisible;
     }
 
     public void setAvailableArea(Rectangle availableArea) {
@@ -126,6 +139,22 @@ public class AppModel {
 
     public Rectangle getAvailableArea() {
         return _availableArea;
+    }
+
+    public void setIndividualGenerated(int generated) {
+        _individualGenerated = generated;
+    }
+
+    public int getIndividualGenerated() {
+        return _individualGenerated;
+    }
+
+    public void setCompanyGenerated(int generated) {
+        _companyGenerated = generated;
+    }
+
+    public int getCompanyGenerated() {
+        return _companyGenerated;
     }
 
     private <T> void notifyListeners(Property property, T value) {

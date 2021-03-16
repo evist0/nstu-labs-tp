@@ -1,21 +1,19 @@
 package com.evist0.application;
 
 import com.evist0.dto.settings.SettingsDTO;
-import com.evist0.taxpayer.TaxpayerFactory;
 
 import java.awt.*;
 import java.util.Timer;
-import java.util.TimerTask;
 
 public class AppController {
     private final AppModel _model;
-    private final Timer _timer = new Timer();
+    private Timer _timer;
 
     public AppController(AppModel model) {
         _model = model;
     }
 
-    public void start(SettingsDTO dto) {
+    public void startSimulation(SettingsDTO dto) {
         var started = _model.getStarted();
 
         if (!started) {
@@ -23,67 +21,55 @@ public class AppController {
             _model.setN2(dto.N2);
             _model.setP1(dto.P1);
             _model.setP2(dto.P2);
+
             _model.setTimePassed(0L);
+            _model.setIndividualGenerated(0);
+            _model.setCompanyGenerated(0);
+            _model.resetTaxpayers();
 
             _model.setStarted(true);
 
-            _timer.schedule(new TimerTask() {
-                TaxpayerFactory factory = new TaxpayerFactory(_model);
-
-                @Override
-                public void run() {
-                    var timePassed = _model.getTimePassed();
-
-                    if (timePassed % _model.getN1() == 0) {
-                        var taxpayer = factory.produceIndividual();
-
-                        if (taxpayer != null) {
-                            _model.addTaxpayer(taxpayer);
-                        }
-                    }
-
-                    if (timePassed % _model.getN2() == 0) {
-                        var taxpayer = factory.produceCompany();
-
-                        if (taxpayer != null) {
-                            _model.addTaxpayer(taxpayer);
-                        }
-                    }
-
-                    _model.setTimePassed(timePassed + 1);
-                }
-            }, 1000, 1000);
+            _timer = new Timer();
+            _timer.schedule(new SimulationTask(_model), 1000, 1000);
         }
     }
 
-    public void stop() {
-        _model.setStarted(false);
+    public void resumeSimulation(SettingsDTO dto) {
+        _model.setStarted(true);
+
+        _timer = new Timer();
+        _timer.schedule(new SimulationTask(_model), 1000, 1000);
+    }
+
+    public void stopSimulation() {
+        _timer.purge();
         _timer.cancel();
+
+        _model.setStarted(false);
     }
 
     public void toggleSimulation(SettingsDTO dto) {
         var started = _model.getStarted();
 
         if (!started) {
-            start(dto);
+            startSimulation(dto);
         } else {
-            stop();
+            stopSimulation();
         }
     }
 
-    public void toggleTimer() {
-        _model.toggleTimer();
-    }
-    public void setTimerVisible() {
-        _model.setTimerVisble();
-    }
-    public void setTimerInvisible() {
-        _model.setTimerInvisible();
-    }
-    public void toggleDialogVisible(){
-        _model.toggleDialogVisible();
+    public void toggleTimerVisible() {
+        var visible = _model.getTimerVisible();
+        _model.setTimerVisible(!visible);
     }
 
+    public void setTimerVisible(boolean visible) {
+        _model.setTimerVisible(visible);
+    }
+
+    public void setDialogVisible(boolean visible) {
+        _model.setDialogVisible(visible);
+    }
 
     public void updateAvailableArea(Rectangle availableArea) {
         _model.setAvailableArea(availableArea);

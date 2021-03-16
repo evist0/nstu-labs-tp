@@ -1,7 +1,9 @@
 package com.evist0.components;
 
 import com.evist0.application.AppController;
+import com.evist0.application.AppModel;
 import com.evist0.application.AppView;
+import com.evist0.dto.settings.SettingsException;
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;
@@ -13,7 +15,7 @@ public class Menubar extends JMenuBar {
     private final JMenuItem _toggleTimerItem;
     private final JMenuItem _stopItem;
 
-    public Menubar(AppController controller, AppView view) {
+    public Menubar(AppController controller, AppView view, AppModel model) {
         super();
         _view = view;
 
@@ -35,15 +37,23 @@ public class Menubar extends JMenuBar {
 
         add(controlsMenu);
 
-        _initListeners(controller);
+        _initListeners(controller, model);
     }
 
-    private void _initListeners(AppController controller) {
+    private void _initListeners(AppController controller, AppModel model) {
         _startItem.addActionListener((e) -> {
-            var dto = _view.getSettingsDTO();
-            controller.start(dto);
+            try {
+                var dto = _view.getSettingsDTO();
+                controller.startSimulation(dto);
+            } catch (SettingsException error) {
+                switch (error.getExceptionField()) {
+                    case N1 -> model.setN1(1);
+                    case N2 -> model.setN2(1);
+                }
+                _view.showErrorMessage(error.getMessage());
+            }
         });
-        _toggleTimerItem.addActionListener((e -> controller.toggleTimer()));
-        _stopItem.addActionListener((e -> controller.stop()));
+        _toggleTimerItem.addActionListener((e -> controller.toggleTimerVisible()));
+        _stopItem.addActionListener((e -> controller.stopSimulation()));
     }
 }

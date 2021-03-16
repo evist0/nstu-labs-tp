@@ -3,6 +3,7 @@ package com.evist0.application;
 import com.evist0.components.Menubar;
 import com.evist0.dto.settings.SettingsDTO;
 import com.evist0.dto.settings.SettingsDTOBuilder;
+import com.evist0.dto.settings.SettingsException;
 import com.evist0.properties.ModelChangeListener;
 import com.evist0.properties.ModelChangedEvent;
 import com.evist0.taxpayer.AbstractTaxpayer;
@@ -15,33 +16,46 @@ import java.io.File;
 import java.util.ArrayList;
 
 public class AppView extends JFrame {
+    private final AppController _controller;
+    private final AppModel _model;
+
     private Clip clip;
 
     private JPanel content;
+
+    private JLabel timerLabel;
     private JPanel canvasPanel;
+
     private JPanel settingsPanel;
 
-    private JTextField N1;
-    private JTextField N2;
+    private JTextField N1TextField;
+    private JTextField N2TextField;
 
     private final ArrayList<ProbabilityModel> _probabilities = new ArrayList<>();
-    private JComboBox<ProbabilityModel> P1;
-    private JComboBox<ProbabilityModel> P2;
+    private JComboBox<ProbabilityModel> P1ComboBox;
+    private JComboBox<ProbabilityModel> P2ComboBox;
+
+    private JCheckBox showResultsCheckBox;
+
+    private JRadioButton showTimerRadioButton;
+    private JRadioButton hideTimerRadioButton;
 
     private JButton startButton;
-    private JLabel timerLabel;
 
-    private JCheckBox showInfoCheckBox;
-    private JRadioButton showTimeRadioButton;
-    private JRadioButton hideTimeRadioButton;
+    public void showErrorMessage(String message) {
+        JOptionPane.showMessageDialog(this,
+                message,
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
+    }
 
-
-    public SettingsDTO getSettingsDTO() {
+    public SettingsDTO getSettingsDTO() throws SettingsException {
         var builder = new SettingsDTOBuilder()
-                .setN1(N1.getText())
-                .setN2(N2.getText())
-                .setP1(_getProbabilityFromModel(P1.getSelectedItem()))
-                .setP2(_getProbabilityFromModel(P2.getSelectedItem()));
+                .setN1(N1TextField.getText())
+                .setN2(N2TextField.getText())
+                .setP1(_getProbabilityFromModel(P1ComboBox.getSelectedItem()))
+                .setP2(_getProbabilityFromModel(P2ComboBox.getSelectedItem()));
+
 
         return builder.build();
     }
@@ -51,7 +65,10 @@ public class AppView extends JFrame {
         setBounds(0, 0, 1280, 720);
         setFocusableWindowState(true);
 
-        var menubar = new Menubar(controller, this);
+        _model = model;
+        _controller = controller;
+
+        var menubar = new Menubar(controller, this, model);
         setJMenuBar(menubar);
 
         add(content);
@@ -70,7 +87,9 @@ public class AppView extends JFrame {
 
         _initComboBoxes();
         _initActionListeners(controller);
-        _initModelChangeListeners(model);
+        _initModelChangeListeners();
+
+        _setViewFromModel();
     }
 
     private void _initComboBoxes() {
@@ -81,8 +100,8 @@ public class AppView extends JFrame {
             var probability = new ProbabilityModel(value, string);
 
             _probabilities.add(probability);
-            P1.addItem(probability);
-            P2.addItem(probability);
+            P1ComboBox.addItem(probability);
+            P2ComboBox.addItem(probability);
         }
     }
 
@@ -100,12 +119,9 @@ public class AppView extends JFrame {
             public void keyTyped(KeyEvent e) {
                 super.keyTyped(e);
                 switch (e.getKeyChar()) {
-                    case 'b' -> {
-                        var dto = getSettingsDTO();
-                        controller.start(dto);
-                    }
-                    case 't' -> controller.toggleTimer();
-                    case 'e' -> controller.stop();
+                    case 'b' -> onStart();
+                    case 't' -> controller.toggleTimerVisible();
+                    case 'e' -> controller.stopSimulation();
                 }
             }
         };
@@ -123,52 +139,70 @@ public class AppView extends JFrame {
         settingsPanel.addMouseListener(blurListener);
 
         canvasPanel.addComponentListener(resizeListener);
-        showTimeRadioButton.addActionListener(e->{
-        controller.setTimerVisible();
+
+        showResultsCheckBox.addActionListener(e -> {
+            var checkBox = (JCheckBox) e.getSource();
+            var selected = checkBox.isSelected();
+
+            controller.setDialogVisible(selected);
         });
-        hideTimeRadioButton.addActionListener(e->{
-            controller.setTimerInvisible();
-        });
-        showInfoCheckBox.addActionListener(e->{
-            controller.toggleDialogVisible();
-        });
-        startButton.addActionListener(e -> {
-            var dto = getSettingsDTO();
-            controller.toggleSimulation(dto);
-        });
+
+        showTimerRadioButton.addActionListener(e -> controller.setTimerVisible(true));
+        hideTimerRadioButton.addActionListener(e -> controller.setTimerVisible(false));
+
+        startButton.addActionListener(e -> onStart());
     }
 
-    private void _initModelChangeListeners(AppModel model) {
+    private void _initModelChangeListeners() {
         var modelChangeListener = new ModelChangeListener() {
             @Override
             public <T> void modelChange(ModelChangedEvent<T> evt) {
                 switch (evt.getProperty()) {
-                    case N1 -> N1.setText(Integer.toString((int) evt.getValue()));
-                    case N2 -> N2.setText(Integer.toString((int) evt.getValue()));
+                    case Started -> onStartToggle((boolean) evt.getValue());
+                    case TimePassed -> onSecondsPassed((Long) evt.getValue());
+                    case N1 -> N1TextField.setText(Integer.toString((int) evt.getValue()));
+                    case N2 -> N2TextField.setText(Integer.toString((int) evt.getValue()));
                     case P1 -> {
                         var item = _findProbabilityItem((float) evt.getValue());
-                        P1.setSelectedItem(item);
+                        P1ComboBox.setSelectedItem(item);
                     }
                     case P2 -> {
                         var item = _findProbabilityItem((float) evt.getValue());
-                        P2.setSelectedItem(item);
+                        P2ComboBox.setSelectedItem(item);
                     }
-                    case Started -> onStartedToggle((boolean) evt.getValue());
-                    case TimePassed -> onSecondsPassed((Long) evt.getValue());
-                    case TimerVisibility -> timerLabel.setVisible((boolean) evt.getValue());
+                    case TimerVisibility -> {
+                        timerLabel.setVisible((boolean) evt.getValue());
+                        showTimerRadioButton.setSelected((boolean) evt.getValue());
+                        hideTimerRadioButton.setSelected(!(boolean) evt.getValue());
+                    }
+                    case ResultsVisibility -> showResultsCheckBox.setSelected((boolean) evt.getValue());
                     case Taxpayers -> drawTaxpayers((ArrayList<AbstractTaxpayer>) evt.getValue());
                 }
             }
         };
 
-        model.addModelChangedListener(modelChangeListener);
+        _model.addModelChangedListener(modelChangeListener);
     }
 
-    private void onStartedToggle(boolean started) {
-        N1.setEnabled(!started);
-        N2.setEnabled(!started);
-        P1.setEnabled(!started);
-        P2.setEnabled(!started);
+    private void onStart() {
+        try {
+            var dto = getSettingsDTO();
+            _controller.toggleSimulation(dto);
+        } catch (SettingsException error) {
+            switch (error.getExceptionField()) {
+                case N1 -> _model.setN1(1);
+                case N2 -> _model.setN2(1);
+            }
+
+            showErrorMessage(error.getMessage());
+        }
+    }
+
+    private void onStartToggle(boolean started) {
+        N1TextField.setEnabled(!started);
+        N2TextField.setEnabled(!started);
+        P1ComboBox.setEnabled(!started);
+        P2ComboBox.setEnabled(!started);
 
         startButton.setText(started ? "Стоп" : "Старт");
 
@@ -176,6 +210,12 @@ public class AppView extends JFrame {
             clip.loop(Clip.LOOP_CONTINUOUSLY);
         } else {
             clip.stop();
+
+            var shouldShowResults = _model.getDialogVisible();
+
+            if (shouldShowResults) {
+                var dialog = new ResultsDialog(this, _controller, _model);
+            }
         }
     }
 
@@ -214,4 +254,19 @@ public class AppView extends JFrame {
         return ((ProbabilityModel) model).getValue();
     }
 
+    private void _setViewFromModel() {
+        N1TextField.setText(Integer.toString(_model.getN1()));
+        N2TextField.setText(Integer.toString(_model.getN2()));
+
+        P1ComboBox.setSelectedItem(_findProbabilityItem(_model.getP1()));
+        P2ComboBox.setSelectedItem(_findProbabilityItem(_model.getP2()));
+
+        var timerVisible = _model.getTimerVisible();
+
+        timerLabel.setVisible(timerVisible);
+        showTimerRadioButton.setSelected(timerVisible);
+        hideTimerRadioButton.setSelected(!timerVisible);
+
+        showResultsCheckBox.setSelected(_model.getDialogVisible());
+    }
 }

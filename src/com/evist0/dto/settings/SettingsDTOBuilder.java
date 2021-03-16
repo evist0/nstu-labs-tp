@@ -12,15 +12,37 @@ public class SettingsDTOBuilder {
         this.P2 = 0;
     }
 
-    public SettingsDTOBuilder setN1(String N1) throws NumberFormatException {
-        this.N1 = Integer.parseInt(N1);
+    public SettingsDTOBuilder setN1(String N1) throws SettingsException {
+        int value;
 
+        try {
+            value = Integer.parseInt(N1);
+        } catch (Exception error) {
+            throw new SettingsException(SettingsExceptionField.N1, "N1 contains wrong Value");
+        }
+
+        if (value <= 0) {
+            throw new SettingsException(SettingsExceptionField.N1, "N1 can't be less then 0");
+        }
+
+        this.N1 = value;
         return this;
     }
 
-    public SettingsDTOBuilder setN2(String N2) throws NumberFormatException {
-        this.N2 = Integer.parseInt(N2);
+    public SettingsDTOBuilder setN2(String N2) throws SettingsException {
+        int value;
 
+        try {
+            value = Integer.parseInt(N2);
+        } catch (Exception error) {
+            throw new SettingsException(SettingsExceptionField.N2, "N2 contains wrong Value");
+        }
+
+        if (value <= 0) {
+            throw new SettingsException(SettingsExceptionField.N2, "N2 can't be less then 0");
+        }
+
+        this.N2 = value;
         return this;
     }
 
