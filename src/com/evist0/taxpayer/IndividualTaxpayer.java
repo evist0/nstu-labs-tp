@@ -1,5 +1,7 @@
 package com.evist0.taxpayer;
 
+import com.evist0.dto.taxpayers.TaxpayerDTO;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.File;
@@ -16,8 +18,8 @@ public class IndividualTaxpayer extends AbstractTaxpayer {
             new File("assets/images/individual_3.png"),
     };
 
-    public IndividualTaxpayer(int x, int y, Image image) {
-        super(x, y, image);
+    public IndividualTaxpayer(TaxpayerDTO dto) {
+        super(dto);
         counter++;
     }
 

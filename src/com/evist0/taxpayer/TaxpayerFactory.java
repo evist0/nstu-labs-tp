@@ -1,50 +1,49 @@
 package com.evist0.taxpayer;
 
 import com.evist0.application.AppModel;
+import com.evist0.dto.taxpayers.TaxpayerDTOBuilder;
 
 import java.awt.*;
-import java.util.Random;
 
 public class TaxpayerFactory {
-    private final Random _r = new Random();
-    private final AppModel _m;
+    public IndividualTaxpayer produceIndividual(AppModel model) {
+        var timestamp = model.getTimePassed();
+        var ttl = model.getIndividualTtl();
 
-    public TaxpayerFactory(AppModel model) {
-        _m = model;
-    }
-
-    public IndividualTaxpayer produceIndividual() {
-        var P1 = _m.getP1();
-
-        var generated = _r.nextDouble();
-        var point = getRandomPoint();
+        var position = getRandomPoint(model);
         var image = IndividualTaxpayer.getRandomImage();
 
-        if (generated <= P1) {
-            return new IndividualTaxpayer(point.x, point.y, image);
-        } else {
-            return null;
-        }
+        var dto = new TaxpayerDTOBuilder()
+                .setTimestamp(timestamp)
+                .setTtl(ttl)
+                .setPosition(position)
+                .setImage(image)
+                .build();
+
+        return new IndividualTaxpayer(dto);
     }
 
-    public CompanyTaxpayer produceCompany() {
-        var P2 = _m.getP2();
+    public CompanyTaxpayer produceCompany(AppModel model) {
+        var timestamp = model.getTimePassed();
+        var ttl = model.getCompanyTtl();
 
-        var generated = _r.nextDouble();
-        var point = getRandomPoint();
+        var position = getRandomPoint(model);
         var image = CompanyTaxpayer.getRandomImage();
 
+        var dto = new TaxpayerDTOBuilder()
+                .setTimestamp(timestamp)
+                .setTtl(ttl)
+                .setPosition(position)
+                .setImage(image)
+                .build();
 
-        if (generated <= P2) {
-            return new CompanyTaxpayer(point.x, point.y, image);
-        } else {
-            return null;
-        }
+        return new CompanyTaxpayer(dto);
     }
 
-    private Point getRandomPoint() {
-        int x = (int) (Math.random() * (_m.getAvailableArea().getWidth() - 99));
-        int y = (int) (Math.random() * (_m.getAvailableArea().getHeight() - 99));
+    private Point getRandomPoint(AppModel model) {
+        int x = (int) (Math.random() * (model.getAvailableArea().getWidth() - 99));
+        int y = (int) (Math.random() * (model.getAvailableArea().getHeight() - 99));
+
         return new Point(x, y);
     }
 }

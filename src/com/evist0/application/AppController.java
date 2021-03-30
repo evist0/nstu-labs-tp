@@ -1,13 +1,17 @@
 package com.evist0.application;
 
+import com.evist0.components.objects.ObjectsDialog;
 import com.evist0.dto.settings.SettingsDTO;
+import com.evist0.simulation.Simulation;
+import com.evist0.simulation.middlewares.DestroyMiddleware;
+import com.evist0.simulation.middlewares.FactoryMiddleware;
+import com.evist0.taxpayer.TaxpayerFactory;
 
 import java.awt.*;
-import java.util.Timer;
 
 public class AppController {
     private final AppModel _model;
-    private Timer _timer;
+    private Simulation _simulation;
 
     public AppController(AppModel model) {
         _model = model;
@@ -21,31 +25,28 @@ public class AppController {
             _model.setN2(dto.N2);
             _model.setP1(dto.P1);
             _model.setP2(dto.P2);
+            _model.setIndividualTtl(dto.individualTtl);
+            _model.setCompanyTtl(dto.companyTtl);
 
             _model.setTimePassed(0L);
             _model.setIndividualGenerated(0);
             _model.setCompanyGenerated(0);
             _model.resetTaxpayers();
 
-            _model.setStarted(true);
+            _simulation = new Simulation(_model)
+                    .use(new FactoryMiddleware(new TaxpayerFactory()))
+                    .use(new DestroyMiddleware());
 
-            _timer = new Timer();
-            _timer.schedule(new SimulationTask(_model), 1000, 1000);
+            _simulation.start();
         }
     }
 
-    public void resumeSimulation(SettingsDTO dto) {
-        _model.setStarted(true);
-
-        _timer = new Timer();
-        _timer.schedule(new SimulationTask(_model), 1000, 1000);
+    public void resumeSimulation() {
+        _simulation.start();
     }
 
     public void stopSimulation() {
-        _timer.purge();
-        _timer.cancel();
-
-        _model.setStarted(false);
+        _simulation.stop();
     }
 
     public void toggleSimulation(SettingsDTO dto) {
@@ -73,5 +74,9 @@ public class AppController {
 
     public void updateAvailableArea(Rectangle availableArea) {
         _model.setAvailableArea(availableArea);
+    }
+
+    public void showObjectsDialog() {
+        new ObjectsDialog(_model.getTaxpayerToTimestamp());
     }
 }

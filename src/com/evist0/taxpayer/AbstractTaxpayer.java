@@ -1,40 +1,51 @@
 package com.evist0.taxpayer;
 
+import com.evist0.dto.taxpayers.TaxpayerDTO;
+
 import java.awt.*;
+import java.util.UUID;
 
 public abstract class AbstractTaxpayer {
+    private final UUID _id;
+
+    private final Long _timestamp;
+    private final Long _ttl;
+
+    private final Point _position;
+
     private final Image _image;
-    private int _x;
-    private int _y;
 
-    AbstractTaxpayer(int x, int y, Image image) {
-        _x = x;
-        _y = y;
+    AbstractTaxpayer(TaxpayerDTO dto) {
+        _id = UUID.randomUUID();
 
-        _image = image;
+        _timestamp = dto.timestamp;
+        _ttl = dto.ttl;
+
+        _position = dto.position;
+        _image = dto.image;
     }
 
     public void draw(Graphics g) {
-        g.drawImage(_image, _x, _y, null);
+        g.drawImage(_image, _position.x, _position.y, null);
     }
 
-    public int getX() {
-        return _x;
+    public UUID getId() {
+        return _id;
     }
 
-    public int getY() {
-        return _y;
+    public Long getTimestamp() {
+        return _timestamp;
     }
 
-    public void setX(int x) {
-        this._x = x;
+    public Long getTtl() {
+        return _ttl;
     }
 
-    public void setY(int y) {
-        this._y = y;
+    public Point getPosition() {
+        return _position;
     }
 
-    public Image get_image() {
+    public Image getImage() {
         return _image;
     }
 }
