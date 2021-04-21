@@ -43,6 +43,9 @@ public class AppModel {
 
         _timerVisible = false;
         _dialogVisible = false;
+
+        _individualMove = true;
+        _companyMove = true;
     }
 
     //region started

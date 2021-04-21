@@ -41,10 +41,6 @@ public abstract class Entity {
         return _id;
     }
 
-    public Vector2d getPosition() {
-        return _position;
-    }
-
     public void moveTo(Vector2d destination, float speed) {
         if (destination.x == _position.x && destination.y == _position.y) {
             return;
@@ -94,10 +90,6 @@ public abstract class Entity {
 
     public boolean isMoving() {
         return _moveTask != null;
-    }
-
-    public Image getImage() {
-        return _image;
     }
 
     public Long getTimestamp() {

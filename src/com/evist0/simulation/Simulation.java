@@ -4,8 +4,6 @@ import com.evist0.application.AppModel;
 import com.evist0.simulation.middlewares.SimulationMiddleware;
 
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.*;
 
 public class Simulation {

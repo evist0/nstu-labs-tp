@@ -3,7 +3,6 @@ package com.evist0.taxpayer;
 import com.evist0.dto.taxpayers.TaxpayerDTO;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;

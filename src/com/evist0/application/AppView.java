@@ -315,6 +315,9 @@ public class AppView extends JFrame {
         showTimerRadioButton.setSelected(timerVisible);
         hideTimerRadioButton.setSelected(!timerVisible);
 
+        individualMoveCheckBox.setSelected(_model.getIndividualMove());
+        companyMoveCheckBox.setSelected(_model.getCompanyMove());
+
         showResultsCheckBox.setSelected(_model.getDialogVisible());
     }
 }

@@ -2,7 +2,6 @@ package com.evist0.dto.taxpayers;
 
 import com.evist0.taxpayer.moveSystem.Vector2d;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class TaxpayerDTOBuilder {
