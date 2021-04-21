@@ -6,38 +6,49 @@ import com.evist0.simulation.middlewares.SimulationMiddleware;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.*;
 
 public class Simulation {
-    private Timer _timer;
+    private final ScheduledExecutorService _executor = Executors.newSingleThreadScheduledExecutor();
     private final ArrayList<SimulationMiddleware> _middlewares = new ArrayList<>();
+    private ScheduledFuture<?> scheduledFuture;
 
-    public final AppModel _model;
+    private final AppModel _model;
 
     public Simulation(AppModel model) {
         _model = model;
     }
 
     public void start() {
+        if (scheduledFuture != null && !scheduledFuture.isCancelled()) {
+            stop();
+        }
+
         _model.setStarted(true);
 
-        _timer = new Timer();
-        _timer.schedule(new TimerTask() {
+        scheduledFuture = _executor.scheduleAtFixedRate(new Runnable() {
+            private final long startedTime = System.nanoTime();
+            private long previousTime = startedTime;
+
             @Override
             public void run() {
-                var timePassed = _model.getTimePassed();
+                synchronized (_model) {
+                    float deltaTime = (System.nanoTime() - previousTime) / 1e9f;
 
-                _middlewares.forEach(middleware -> middleware.onTick(_model));
+                    for (var middleware : _middlewares) {
+                        middleware.onTick(_model, deltaTime);
+                    }
 
-                _model.setTimePassed(timePassed + 1);
+                    previousTime = System.nanoTime();
+                    _model.setTimePassed((previousTime - startedTime) / 1_000_000_000);
+                }
             }
-        }, 1000, 1000);
+        }, 0, 20, TimeUnit.MILLISECONDS);
     }
 
     public void stop() {
-        _timer.purge();
-        _timer.cancel();
-
         _model.setStarted(false);
+        scheduledFuture.cancel(false);
     }
 
     public Simulation use(SimulationMiddleware middleware) {

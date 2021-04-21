@@ -4,11 +4,12 @@ import com.evist0.dto.taxpayers.TaxpayerDTO;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Random;
 
-public class IndividualTaxpayer extends AbstractTaxpayer {
+public class IndividualTaxpayer extends Entity {
     public static int counter = 0;
 
     private final static File[] _images = new File[]{
@@ -23,8 +24,8 @@ public class IndividualTaxpayer extends AbstractTaxpayer {
         counter++;
     }
 
-    public static Image getRandomImage() {
-        Image image = null;
+    public static BufferedImage getRandomImage() {
+        BufferedImage image = null;
         var _r = new Random();
         var imageIdx = _r.nextInt(4);
 

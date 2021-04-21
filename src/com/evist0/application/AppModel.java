@@ -3,7 +3,7 @@ package com.evist0.application;
 import com.evist0.properties.ModelChangeListener;
 import com.evist0.properties.ModelChangedEvent;
 import com.evist0.properties.Property;
-import com.evist0.taxpayer.AbstractTaxpayer;
+import com.evist0.taxpayer.Entity;
 
 import java.awt.*;
 import java.util.*;
@@ -17,14 +17,16 @@ public class AppModel {
     private Long _individualTtl, _companyTtl;
 
     private int _individualGenerated, _companyGenerated;
-    private final Vector<AbstractTaxpayer> _taxpayers = new Vector<>();
-    private final TreeSet<UUID> _taxpayerIds = new TreeSet<>();
+    private final Vector<Entity> _taxpayers = new Vector<>();
     private final HashMap<UUID, Long> _taxpayerToTimestamp = new HashMap<>();
 
     private Rectangle _availableArea;
 
     private boolean _timerVisible;
     private boolean _dialogVisible;
+
+    private boolean _individualMove;
+    private boolean _companyMove;
 
     private final ArrayList<ModelChangeListener> _listeners = new ArrayList<>();
 
@@ -152,23 +154,21 @@ public class AppModel {
     //endregion
 
     //region taxpayers
-    public void addTaxpayer(AbstractTaxpayer taxpayer) {
+    public void addTaxpayer(Entity taxpayer) {
         _taxpayers.add(taxpayer);
-        _taxpayerIds.add(taxpayer.getId());
         _taxpayerToTimestamp.put(taxpayer.getId(), taxpayer.getTimestamp());
 
         notifyListeners(Property.Taxpayers, _taxpayers);
     }
 
-    public void removeTaxpayer(AbstractTaxpayer taxpayer) {
+    public void removeTaxpayer(Entity taxpayer) {
         _taxpayers.remove(taxpayer);
-        _taxpayerIds.remove(taxpayer.getId());
         _taxpayerToTimestamp.remove(taxpayer.getId());
 
         notifyListeners(Property.Taxpayers, _taxpayers);
     }
 
-    public Vector<AbstractTaxpayer> getTaxpayers() {
+    public Vector<Entity> getTaxpayers() {
         return _taxpayers;
     }
 
@@ -178,7 +178,6 @@ public class AppModel {
 
     public void resetTaxpayers() {
         _taxpayers.clear();
-        _taxpayerIds.clear();
         _taxpayerToTimestamp.clear();
 
         notifyListeners(Property.Taxpayers, _taxpayers);
@@ -217,6 +216,28 @@ public class AppModel {
     }
     //endregion
 
+    //region individualMove
+    public void setIndividualMove(boolean move) {
+        _individualMove = move;
+        notifyListeners(Property.IndividualMove, _individualMove);
+    }
+
+    public boolean getIndividualMove() {
+        return _individualMove;
+    }
+    //endregion
+
+    //region companyMove
+    public void setCompanyMove(boolean move) {
+        _companyMove = move;
+        notifyListeners(Property.CompanyMove, _companyMove);
+    }
+
+    public boolean getCompanyMove() {
+        return _companyMove;
+    }
+    //endregion
+
     //region modelListeners
     public void addModelChangedListener(ModelChangeListener l) {
         _listeners.add(l);
@@ -226,7 +247,7 @@ public class AppModel {
         _listeners.remove(l);
     }
 
-    private <T> void notifyListeners(Property property, T value) {
+    public <T> void notifyListeners(Property property, T value) {
         for (ModelChangeListener l : _listeners) {
             var event = new ModelChangedEvent<>(property, value);
             l.modelChange(event);

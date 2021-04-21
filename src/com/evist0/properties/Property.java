@@ -11,5 +11,7 @@ public enum Property {
     Taxpayers,
     TimePassed,
     TimerVisibility,
-    ResultsVisibility
+    ResultsVisibility,
+    IndividualMove,
+    CompanyMove
 }

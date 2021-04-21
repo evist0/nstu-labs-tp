@@ -8,12 +8,13 @@ import com.evist0.dto.settings.SettingsException;
 import com.evist0.dto.settings.SettingsExceptionHandler;
 import com.evist0.properties.ModelChangeListener;
 import com.evist0.properties.ModelChangedEvent;
-import com.evist0.taxpayer.AbstractTaxpayer;
+import com.evist0.taxpayer.Entity;
 
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.swing.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Vector;
@@ -47,6 +48,9 @@ public class AppView extends JFrame {
     private JTextField individualTtlTextField;
     private JTextField companyTtlTextField;
 
+    private JCheckBox individualMoveCheckBox;
+    private JCheckBox companyMoveCheckBox;
+
     public void showErrorMessage(String message) {
         JOptionPane.showMessageDialog(this,
                 message,
@@ -74,6 +78,13 @@ public class AppView extends JFrame {
 
         _model = model;
         _controller = controller;
+
+        Timer _timer = new Timer(16, e -> {
+            synchronized (_model) {
+                drawTaxpayers(_model.getTaxpayers());
+            }
+        });
+        _timer.start();
 
         var menubar = new Menubar(controller, this, model);
         setJMenuBar(menubar);
@@ -136,7 +147,9 @@ public class AppView extends JFrame {
         var resizeListener = new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
-                controller.updateAvailableArea(e.getComponent().getBounds());
+                var newBounds = e.getComponent().getBounds();
+
+                controller.updateAvailableArea(newBounds);
             }
         };
 
@@ -152,6 +165,20 @@ public class AppView extends JFrame {
             var selected = checkBox.isSelected();
 
             controller.setDialogVisible(selected);
+        });
+
+        individualMoveCheckBox.addActionListener(e -> {
+            var checkBox = (JCheckBox) e.getSource();
+            var selected = checkBox.isSelected();
+
+            controller.setIndividualMove(selected);
+        });
+
+        companyMoveCheckBox.addActionListener(e -> {
+            var checkBox = (JCheckBox) e.getSource();
+            var selected = checkBox.isSelected();
+
+            controller.setCompanyMove(selected);
         });
 
         showTimerRadioButton.addActionListener(e -> controller.setTimerVisible(true));
@@ -185,7 +212,8 @@ public class AppView extends JFrame {
                         hideTimerRadioButton.setSelected(!(boolean) evt.getValue());
                     }
                     case ResultsVisibility -> showResultsCheckBox.setSelected((boolean) evt.getValue());
-                    case Taxpayers -> drawTaxpayers((Vector<AbstractTaxpayer>) evt.getValue());
+                    case IndividualMove -> individualMoveCheckBox.setSelected((boolean) evt.getValue());
+                    case CompanyMove -> companyMoveCheckBox.setSelected((boolean) evt.getValue());
                 }
             }
         };
@@ -238,15 +266,23 @@ public class AppView extends JFrame {
         timerLabel.setText(timeString);
     }
 
-    private void drawTaxpayers(Vector<AbstractTaxpayer> taxpayers) {
+    private void drawTaxpayers(Vector<Entity> taxpayers) {
         var g = canvasPanel.getGraphics();
         var bounds = canvasPanel.getBounds();
 
+        if (bounds.isEmpty())
+            return;
+
+        var bufferedImage = new BufferedImage(canvasPanel.getWidth(), canvasPanel.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+        var bufferedGraphics = bufferedImage.getGraphics();
+
         g.clearRect(bounds.x, bounds.y, bounds.width, bounds.height);
 
-        for (AbstractTaxpayer taxpayer : taxpayers) {
-            taxpayer.draw(g);
+        for (Entity taxpayer : taxpayers) {
+            taxpayer.draw(bufferedGraphics);
         }
+
+        g.drawImage(bufferedImage, 0, 0, null);
     }
 
     private ProbabilityModel _findProbabilityItem(float value) {

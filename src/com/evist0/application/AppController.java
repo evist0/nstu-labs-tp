@@ -5,6 +5,7 @@ import com.evist0.dto.settings.SettingsDTO;
 import com.evist0.simulation.Simulation;
 import com.evist0.simulation.middlewares.DestroyMiddleware;
 import com.evist0.simulation.middlewares.FactoryMiddleware;
+import com.evist0.simulation.middlewares.MoveMiddleware;
 import com.evist0.taxpayer.TaxpayerFactory;
 
 import java.awt.*;
@@ -34,8 +35,9 @@ public class AppController {
             _model.resetTaxpayers();
 
             _simulation = new Simulation(_model)
+                    .use(new DestroyMiddleware())
                     .use(new FactoryMiddleware(new TaxpayerFactory()))
-                    .use(new DestroyMiddleware());
+                    .use(new MoveMiddleware());
 
             _simulation.start();
         }
@@ -70,6 +72,14 @@ public class AppController {
 
     public void setDialogVisible(boolean visible) {
         _model.setDialogVisible(visible);
+    }
+
+    public void setIndividualMove(boolean move) {
+        _model.setIndividualMove(move);
+    }
+
+    public void setCompanyMove(boolean move) {
+        _model.setCompanyMove(move);
     }
 
     public void updateAvailableArea(Rectangle availableArea) {
