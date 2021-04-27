@@ -105,7 +105,7 @@ public class AppController {
             var objectOutputStream = new ObjectOutputStream(outputStream);
 
             if (previousSimulationState) {
-                _simulation.pause();
+                _simulation.stop();
             }
 
             var taxpayers = _model.getTaxpayers();
@@ -114,7 +114,7 @@ public class AppController {
             objectOutputStream.close();
 
             if (previousSimulationState) {
-                _simulation.resume();
+                _simulation.start();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -133,7 +133,7 @@ public class AppController {
             var objectInputStream = new ObjectInputStream(inputStream);
 
             if (previousSimulationState) {
-                _simulation.pause();
+                _simulation.stop();
             }
 
             @SuppressWarnings("unchecked")
@@ -143,7 +143,7 @@ public class AppController {
             objectInputStream.close();
 
             if (previousSimulationState) {
-                _simulation.resume();
+                _simulation.start();
             }
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();

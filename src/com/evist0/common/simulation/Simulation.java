@@ -17,14 +17,6 @@ public class Simulation {
 
     public Simulation(AppModel model) {
         _model = model;
-    }
-
-    public void start() {
-        if (scheduledFuture != null && !scheduledFuture.isCancelled()) {
-            stop();
-        }
-
-        _model.setStarted(true);
 
         scheduledFuture = _executor.scheduleAtFixedRate(new Runnable() {
             private final long startedTime = System.nanoTime();
@@ -46,21 +38,15 @@ public class Simulation {
                 }
             }
         }, 0, 20, TimeUnit.MILLISECONDS);
-
-        _running = true;
     }
 
-    public void resume() {
+    public void start() {
+        _model.setStarted(true);
         _running = true;
-    }
-
-    public void pause() {
-        _running = false;
     }
 
     public void stop() {
         _model.setStarted(false);
-        scheduledFuture.cancel(false);
         _running = false;
     }
 
