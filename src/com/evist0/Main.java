@@ -7,7 +7,7 @@ import com.evist0.client.views.app.AppView;
 
 public class Main {
     public static void main(String[] args) {
-        var config = new Config("config.cfg");
+        var config = new Config("config.yml");
 
         var model = new AppModel(config);
         var controller = new AppController(model);

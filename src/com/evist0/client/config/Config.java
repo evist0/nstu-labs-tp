@@ -6,15 +6,15 @@ import java.util.Arrays;
 public class Config {
     private final File _configFile;
 
-    private boolean started;
+    private Boolean started;
     private Long timePassed;
 
     private Long N1, N2;
-    private float P1, P2;
+    private Float P1, P2;
     private Long individualTtl, companyTtl;
 
-    private boolean individualMove;
-    private boolean companyMove;
+    private Boolean individualMove;
+    private Boolean companyMove;
 
     public Config(String configPath) {
         _configFile = new File(configPath);
@@ -32,7 +32,7 @@ public class Config {
 
                 String line = bufferedReader.readLine();
                 while (line != null) {
-                    var splitted = Arrays.stream(line.split(""))
+                    var splitted = Arrays.stream(line.split("="))
                             .map(String::trim)
                             .map(String::toUpperCase)
                             .toList();
@@ -80,10 +80,15 @@ public class Config {
         write("TIME_PASSED", Long.toString(timePassed), bufferedWriter);
         write("N1", Long.toString(N1), bufferedWriter);
         write("N2", Long.toString(N2), bufferedWriter);
-        write("STARTED", started ? "TRUE" : "FALSE", bufferedWriter);
+        write("P1", Float.toString(P1), bufferedWriter);
+        write("P2", Float.toString(P2), bufferedWriter);
+        write("INDIVIDUAL_TTL", Long.toString(individualTtl), bufferedWriter);
+        write("COMPANY_TTL", Long.toString(companyTtl), bufferedWriter);
+        write("INDIVIDUAL_MOVE", individualMove ? "TRUE" : "FALSE", bufferedWriter);
+        write("COMPANY_MOVE", companyMove ? "TRUE" : "FALSE", bufferedWriter);
     }
 
-    public boolean getStarted() {
+    public Boolean getStarted() {
         return started;
     }
 
@@ -115,7 +120,7 @@ public class Config {
         N2 = Long.parseLong(value);
     }
 
-    public float getP1() {
+    public Float getP1() {
         return P1;
     }
 
@@ -123,7 +128,7 @@ public class Config {
         P1 = Float.parseFloat(value);
     }
 
-    public float getP2() {
+    public Float getP2() {
         return P2;
     }
 
@@ -147,7 +152,7 @@ public class Config {
         companyTtl = Long.parseLong(value);
     }
 
-    public boolean getIndividualMove() {
+    public Boolean getIndividualMove() {
         return individualMove;
     }
 
@@ -155,7 +160,7 @@ public class Config {
         individualMove = value.equals("TRUE");
     }
 
-    public boolean getCompanyMove() {
+    public Boolean getCompanyMove() {
         return companyMove;
     }
 

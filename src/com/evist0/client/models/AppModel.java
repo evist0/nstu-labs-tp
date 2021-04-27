@@ -32,21 +32,21 @@ public class AppModel {
     private final ArrayList<ModelChangeListener> _listeners = new ArrayList<>();
 
     public AppModel(Config config) {
-        _started = config.started != null ? config.started : false;
-        _timePassed = config.timePassed != null ? config.timePassed : 0;
+        _started = config.getStarted() != null ? config.getStarted() : false;
+        _timePassed = config.getTimePassed() != null ? config.getTimePassed() : 0;
 
-        _N1 = config.N1 != null ? config.N1 : 1L;
-        _N2 = config.N2 != null ? config.N2 : 1L;
-        _P1 = config.P1 != null ? config.P1 : 1;
-        _P2 = config.P2 != null ? config.P2 : 1;
-        _individualTtl = config.individualTtl != null ? config.individualTtl : 1L;
-        _companyTtl = config.companyTtl != null ? config.companyTtl : 1L;
+        _N1 = config.getN1() != null ? config.getN1() : 1L;
+        _N2 = config.getN2() != null ? config.getN2() : 1L;
+        _P1 = config.getP1() != null ? config.getP2() : 1;
+        _P2 = config.getP2() != null ? config.getP2() : 1;
+        _individualTtl = config.getIndividualTtl() != null ? config.getIndividualTtl() : 1L;
+        _companyTtl = config.getCompanyTtl() != null ? config.getCompanyTtl() : 1L;
 
         _timerVisible = false;
         _dialogVisible = false;
 
-        _individualMove = config.individualMove != null ? config.individualMove : true;
-        _companyMove = config.companyMove != null ? config.companyMove : true;
+        _individualMove = config.getIndividualMove() != null ? config.getIndividualMove() : true;
+        _companyMove = config.getCompanyMove() != null ? config.getCompanyMove() : true;
     }
 
     //region started
