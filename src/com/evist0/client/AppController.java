@@ -1,6 +1,7 @@
 package com.evist0.client;
 
 import com.evist0.client.models.AppModel;
+import com.evist0.client.views.console.ConsoleView;
 import com.evist0.client.views.objects.ObjectsDialog;
 import com.evist0.common.dto.settings.SettingsDTO;
 import com.evist0.common.entities.Entity;
@@ -18,6 +19,8 @@ public class AppController {
     private final AppModel _model;
     private final Simulation _simulation;
 
+    private final ConsoleView _console;
+
     public AppController(AppModel model) {
         _model = model;
 
@@ -25,6 +28,8 @@ public class AppController {
                 .use(new DestroyMiddleware())
                 .use(new FactoryMiddleware(new TaxpayerFactory()))
                 .use(new MoveMiddleware());
+
+        _console = new ConsoleView(model);
     }
 
     private void setModel(SettingsDTO dto) {
@@ -148,5 +153,9 @@ public class AppController {
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
+    }
+
+    public void toggleConsole() {
+        _console.setVisible(!_console.isVisible());
     }
 }

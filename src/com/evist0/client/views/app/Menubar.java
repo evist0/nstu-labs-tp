@@ -16,9 +16,9 @@ public class Menubar extends JMenuBar {
     private final JMenuItem _toggleTimerItem = new JMenuItem("Таймер");
     private final JMenuItem _stopItem = new JMenuItem("Стоп");
 
-    private final JMenuItem _showObjectsItem = new JMenu("Показать объекты");
+    private final JMenuItem _showObjectsItem = new JMenuItem("Показать объекты");
 
-    private final JMenuItem _showConsoleItem = new JMenu("Консоль");
+    private final JMenuItem _showConsoleItem = new JMenuItem("Консоль");
 
     private final JMenu _fileMenu = new JMenu("Файл");
     private final JMenuItem _saveItem = new JMenuItem("Сохранить");
@@ -41,7 +41,6 @@ public class Menubar extends JMenuBar {
         add(_controlsMenu);
 
         add(_showObjectsItem);
-
 
         _fileMenu.add(_saveItem);
         _fileMenu.add(_loadItem);
@@ -72,6 +71,8 @@ public class Menubar extends JMenuBar {
 
         _saveItem.addActionListener(e -> controller.saveObjects());
         _loadItem.addActionListener(e -> controller.loadObjects());
+
+        _showConsoleItem.addActionListener(e -> controller.toggleConsole());
     }
 
     public void repaintChildren() {
