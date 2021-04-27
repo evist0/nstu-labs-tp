@@ -27,7 +27,7 @@ public class AppView extends JFrame {
 
     private Clip clip;
 
-    private Menubar menubar;
+    private final Menubar menubar;
     private JPanel content;
 
     private JLabel timerLabel;
@@ -68,7 +68,7 @@ public class AppView extends JFrame {
                 .setP1(_getProbabilityFromModel(P1ComboBox.getSelectedItem()))
                 .setP2(_getProbabilityFromModel(P2ComboBox.getSelectedItem()))
                 .setIndividualTtl(individualTtlTextField.getText())
-                .setCompanyTtl(individualTtlTextField.getText());
+                .setCompanyTtl(companyTtlTextField.getText());
 
 
         return builder.build();
@@ -324,5 +324,17 @@ public class AppView extends JFrame {
         companyMoveCheckBox.setSelected(_model.getCompanyMove());
 
         showResultsCheckBox.setSelected(_model.getDialogVisible());
+    }
+
+    @Override
+    protected void processWindowEvent(WindowEvent e) {
+        if (e.getID() == WindowEvent.WINDOW_CLOSING) {
+            try {
+                _model.save();
+            } catch (Exception exception) {
+                exception.printStackTrace();
+            }
+        }
+        super.processWindowEvent(e);
     }
 }

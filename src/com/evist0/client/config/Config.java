@@ -1,5 +1,7 @@
 package com.evist0.client.config;
 
+import com.evist0.client.models.AppModel;
+
 import java.io.*;
 import java.util.Arrays;
 
@@ -21,7 +23,7 @@ public class Config {
 
         if (!_configFile.exists()) {
             try {
-                boolean created = _configFile.createNewFile();
+                _configFile.createNewFile();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -55,37 +57,32 @@ public class Config {
 
                     line = bufferedReader.readLine();
                 }
+
+                bufferedReader.close();
+                fileReader.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    public void save() throws Exception {
-
-        if (_configFile.exists()) {
-            var deleted = _configFile.delete();
-
-            if (deleted) {
-                var created = _configFile.createNewFile();
-            } else {
-                throw new Exception("File error");
-            }
-        }
-
+    public void save(AppModel model) throws Exception {
         var fileWriter = new FileWriter(_configFile);
         var bufferedWriter = new BufferedWriter(fileWriter);
 
-        write("STARTED", started ? "TRUE" : "FALSE", bufferedWriter);
-        write("TIME_PASSED", Long.toString(timePassed), bufferedWriter);
-        write("N1", Long.toString(N1), bufferedWriter);
-        write("N2", Long.toString(N2), bufferedWriter);
-        write("P1", Float.toString(P1), bufferedWriter);
-        write("P2", Float.toString(P2), bufferedWriter);
-        write("INDIVIDUAL_TTL", Long.toString(individualTtl), bufferedWriter);
-        write("COMPANY_TTL", Long.toString(companyTtl), bufferedWriter);
-        write("INDIVIDUAL_MOVE", individualMove ? "TRUE" : "FALSE", bufferedWriter);
-        write("COMPANY_MOVE", companyMove ? "TRUE" : "FALSE", bufferedWriter);
+        write("STARTED", model.getStarted() ? "TRUE" : "FALSE", bufferedWriter);
+        write("TIME_PASSED", Long.toString(model.getTimePassed()), bufferedWriter);
+        write("N1", Long.toString(model.getN1()), bufferedWriter);
+        write("N2", Long.toString(model.getN2()), bufferedWriter);
+        write("P1", Float.toString(model.getP1()), bufferedWriter);
+        write("P2", Float.toString(model.getP2()), bufferedWriter);
+        write("INDIVIDUAL_TTL", Long.toString(model.getIndividualTtl()), bufferedWriter);
+        write("COMPANY_TTL", Long.toString(model.getCompanyTtl()), bufferedWriter);
+        write("INDIVIDUAL_MOVE", model.getIndividualMove() ? "TRUE" : "FALSE", bufferedWriter);
+        write("COMPANY_MOVE", model.getCompanyMove() ? "TRUE" : "FALSE", bufferedWriter);
+
+        bufferedWriter.close();
+        fileWriter.close();
     }
 
     public Boolean getStarted() {
@@ -169,6 +166,6 @@ public class Config {
     }
 
     private void write(String token, String value, BufferedWriter bufferedWriter) throws IOException {
-        bufferedWriter.write("%s=%s".formatted(token, value));
+        bufferedWriter.write("%s=%s\n".formatted(token, value));
     }
 }

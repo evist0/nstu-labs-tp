@@ -10,6 +10,8 @@ import java.awt.*;
 import java.util.*;
 
 public class AppModel {
+    private Config _config;
+
     private boolean _started;
     private Long _timePassed;
 
@@ -32,12 +34,14 @@ public class AppModel {
     private final ArrayList<ModelChangeListener> _listeners = new ArrayList<>();
 
     public AppModel(Config config) {
+        _config = config;
+
         _started = config.getStarted() != null ? config.getStarted() : false;
         _timePassed = config.getTimePassed() != null ? config.getTimePassed() : 0;
 
         _N1 = config.getN1() != null ? config.getN1() : 1L;
         _N2 = config.getN2() != null ? config.getN2() : 1L;
-        _P1 = config.getP1() != null ? config.getP2() : 1;
+        _P1 = config.getP1() != null ? config.getP1() : 1;
         _P2 = config.getP2() != null ? config.getP2() : 1;
         _individualTtl = config.getIndividualTtl() != null ? config.getIndividualTtl() : 1L;
         _companyTtl = config.getCompanyTtl() != null ? config.getCompanyTtl() : 1L;
@@ -268,4 +272,8 @@ public class AppModel {
         }
     }
     //endregion
+
+    public void save() throws Exception {
+        _config.save(this);
+    }
 }
