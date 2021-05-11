@@ -1,4 +1,4 @@
-package com.evist0;
+package com.evist0.client;
 
 import com.evist0.client.AppController;
 import com.evist0.client.config.Config;

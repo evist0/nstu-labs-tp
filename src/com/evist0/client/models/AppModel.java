@@ -1,5 +1,6 @@
 package com.evist0.client.models;
 
+import com.evist0.client.Client;
 import com.evist0.client.config.Config;
 import com.evist0.common.properties.ModelChangeListener;
 import com.evist0.common.properties.ModelChangedEvent;
@@ -7,6 +8,7 @@ import com.evist0.common.properties.Property;
 import com.evist0.common.entities.Entity;
 
 import java.awt.*;
+import java.io.IOException;
 import java.util.*;
 
 public class AppModel {
@@ -21,7 +23,7 @@ public class AppModel {
 
     private int _individualGenerated, _companyGenerated;
     private Vector<Entity> _taxpayers = new Vector<>();
-    private HashMap<UUID, Long> _taxpayerToTimestamp = new HashMap<>();
+    private final HashMap<UUID, Long> _taxpayerToTimestamp = new HashMap<>();
 
     private Rectangle _availableArea;
 
@@ -97,6 +99,7 @@ public class AppModel {
 
     //region N1
     public void setN1(Long N1) {
+        notifyServer(Property.N1, N1, _N1);
         _N1 = N1;
         notifyListeners(Property.N1, _N1);
     }
@@ -167,9 +170,7 @@ public class AppModel {
 
         _taxpayerToTimestamp.clear();
 
-        taxpayers.forEach(taxpayer -> {
-            _taxpayerToTimestamp.put(taxpayer.getId(), taxpayer.getTimestamp());
-        });
+        taxpayers.forEach(taxpayer -> _taxpayerToTimestamp.put(taxpayer.getId(), taxpayer.getTimestamp()));
     }
 
     public void addTaxpayer(Entity taxpayer) {
@@ -263,6 +264,23 @@ public class AppModel {
 
     public void removeModelChangedListener(ModelChangeListener l) {
         _listeners.remove(l);
+    }
+
+    private <T> void notifyServer(Property property, T value, T previous)
+    {
+        if (value == previous)
+            return;
+
+        var client = Client.getInstance();
+
+        if (client == null)
+            return;
+
+        try {
+            client.sendMessage("[set]" + property.toString() + ' ' + value.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public <T> void notifyListeners(Property property, T value) {

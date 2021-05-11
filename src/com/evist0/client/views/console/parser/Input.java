@@ -8,6 +8,10 @@ public class Input {
     }
 
     public Result<Character> getCharacter() {
+        if (value.isEmpty()) {
+            return Result.empty(this);
+        }
+
         return Result.fromValue(value.charAt(0), skip(1));
     }
 
