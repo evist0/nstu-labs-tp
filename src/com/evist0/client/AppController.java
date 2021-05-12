@@ -33,12 +33,12 @@ public class AppController {
     }
 
     private void setModel(SettingsDTO dto) {
-        _model.setN1(dto.N1);
-        _model.setN2(dto.N2);
-        _model.setP1(dto.P1);
-        _model.setP2(dto.P2);
-        _model.setIndividualTtl(dto.individualTtl);
-        _model.setCompanyTtl(dto.companyTtl);
+        _model.setN1(dto.N1, true);
+        _model.setN2(dto.N2, true);
+        _model.setP1(dto.P1, true);
+        _model.setP2(dto.P2, true);
+        _model.setIndividualTtl(dto.individualTtl, true);
+        _model.setCompanyTtl(dto.companyTtl, true);
 
         _model.setTimePassed(0L);
         _model.setIndividualGenerated(0);
@@ -71,23 +71,23 @@ public class AppController {
 
     public void toggleTimerVisible() {
         var visible = _model.getTimerVisible();
-        _model.setTimerVisible(!visible);
+        _model.setTimerVisible(!visible, true);
     }
 
     public void setTimerVisible(boolean visible) {
-        _model.setTimerVisible(visible);
+        _model.setTimerVisible(visible, true);
     }
 
     public void setDialogVisible(boolean visible) {
-        _model.setDialogVisible(visible);
+        _model.setDialogVisible(visible, true);
     }
 
     public void setIndividualMove(boolean move) {
-        _model.setIndividualMove(move);
+        _model.setIndividualMove(move, true);
     }
 
     public void setCompanyMove(boolean move) {
-        _model.setCompanyMove(move);
+        _model.setCompanyMove(move, true);
     }
 
     public void updateAvailableArea(Rectangle availableArea) {

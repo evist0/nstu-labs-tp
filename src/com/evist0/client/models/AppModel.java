@@ -98,8 +98,11 @@ public class AppModel {
     //endregion
 
     //region N1
-    public void setN1(Long N1) {
-        notifyServer(Property.N1, N1, _N1);
+    public void setN1(Long N1, boolean shouldNotify) {
+        if (shouldNotify) {
+            notifyServer(Property.N1, N1, _N1);
+        }
+
         _N1 = N1;
         notifyListeners(Property.N1, _N1);
     }
@@ -110,7 +113,11 @@ public class AppModel {
     //endregion
 
     //region N2
-    public void setN2(Long N2) {
+    public void setN2(Long N2, boolean shouldNotify) {
+        if (shouldNotify) {
+            notifyServer(Property.N2, N2, _N2);
+        }
+
         _N2 = N2;
         notifyListeners(Property.N2, _N2);
     }
@@ -121,7 +128,11 @@ public class AppModel {
     //endregion
 
     //region P1
-    public void setP1(float P1) {
+    public void setP1(float P1, boolean shouldNotify) {
+        if (shouldNotify) {
+            notifyServer(Property.P1, P1, _P1);
+        }
+
         _P1 = P1;
         notifyListeners(Property.P1, _P1);
     }
@@ -132,7 +143,11 @@ public class AppModel {
     //endregion
 
     //region P2
-    public void setP2(float P2) {
+    public void setP2(float P2, boolean shouldNotify) {
+        if (shouldNotify) {
+            notifyServer(Property.P2, P2, _P2);
+        }
+
         _P2 = P2;
         notifyListeners(Property.P2, _P2);
     }
@@ -143,7 +158,11 @@ public class AppModel {
     //endregion
 
     //region individualTtl
-    public void setIndividualTtl(Long ttl) {
+    public void setIndividualTtl(Long ttl, boolean shouldNotify) {
+        if (shouldNotify) {
+            notifyServer(Property.IndividualTtl, ttl, _individualTtl);
+        }
+
         _individualTtl = ttl;
         notifyListeners(Property.IndividualTtl, _individualTtl);
     }
@@ -154,7 +173,11 @@ public class AppModel {
     //endregion
 
     //region companyTtl
-    public void setCompanyTtl(Long ttl) {
+    public void setCompanyTtl(Long ttl, boolean shouldNotify) {
+        if (shouldNotify) {
+            notifyServer(Property.CompanyTtl, ttl, _companyTtl);
+        }
+
         _companyTtl = ttl;
         notifyListeners(Property.CompanyTtl, _companyTtl);
     }
@@ -204,7 +227,11 @@ public class AppModel {
     //endregion
 
     //region timerVisible
-    public void setTimerVisible(boolean visible) {
+    public void setTimerVisible(boolean visible, boolean shouldNotify) {
+        if (shouldNotify) {
+            notifyServer(Property.TimerVisibility, visible, _timerVisible);
+        }
+
         _timerVisible = visible;
         notifyListeners(Property.TimerVisibility, _timerVisible);
     }
@@ -215,7 +242,11 @@ public class AppModel {
     //endregion
 
     //region dialogVisible
-    public void setDialogVisible(boolean visible) {
+    public void setDialogVisible(boolean visible, boolean shouldNotify) {
+        if (shouldNotify) {
+            notifyServer(Property.ResultsVisibility, visible, _dialogVisible);
+        }
+
         _dialogVisible = visible;
         notifyListeners(Property.ResultsVisibility, _dialogVisible);
     }
@@ -236,7 +267,11 @@ public class AppModel {
     //endregion
 
     //region individualMove
-    public void setIndividualMove(boolean move) {
+    public void setIndividualMove(boolean move, boolean shouldNotify) {
+        if (shouldNotify) {
+            notifyServer(Property.IndividualMove, move, _individualMove);
+        }
+
         _individualMove = move;
         notifyListeners(Property.IndividualMove, _individualMove);
     }
@@ -247,7 +282,11 @@ public class AppModel {
     //endregion
 
     //region companyMove
-    public void setCompanyMove(boolean move) {
+    public void setCompanyMove(boolean move, boolean shouldNotify) {
+        if (shouldNotify) {
+            notifyServer(Property.CompanyMove, move, _companyMove);
+        }
+
         _companyMove = move;
         notifyListeners(Property.CompanyMove, _companyMove);
     }
@@ -266,9 +305,8 @@ public class AppModel {
         _listeners.remove(l);
     }
 
-    private <T> void notifyServer(Property property, T value, T previous)
-    {
-        if (value == previous)
+    private <T> void notifyServer(Property property, T value, T previous) {
+        if (value.equals(previous))
             return;
 
         var client = Client.getInstance();

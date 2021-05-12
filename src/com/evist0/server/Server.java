@@ -21,8 +21,8 @@ class Server {
 
                 ClientThread newClient = new ClientThread(clientSocket, this);
 
-                clientThreads.add(newClient);
                 newClient.start();
+                clientThreads.add(newClient);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -30,12 +30,7 @@ class Server {
     }
 
     public static void main(String[] args) {
-        if (args.length < 1) {
-            System.out.println("Syntax: java Server <port-number>");
-            System.exit(0);
-        }
-
-        int port = Integer.parseInt(args[0]);
+        int port = 1337;
 
         Server server = new Server(port);
         server.execute();
@@ -51,11 +46,10 @@ class Server {
 
     void removeUser(ClientThread aUser) {
         clientThreads.remove(aUser);
-        System.out.println("The user " + aUser.getClientSocket().getInetAddress() + " quitted");
     }
 
-    boolean hasUsers() {
-        return !this.clientThreads.isEmpty();
+    boolean isEmpty() {
+        return this.clientThreads.isEmpty();
     }
 
     Set<ClientThread> getClientThreads() {

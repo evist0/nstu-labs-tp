@@ -1,6 +1,7 @@
 package com.evist0.client.views.app;
 
 import com.evist0.client.AppController;
+import com.evist0.client.Client;
 import com.evist0.client.models.AppModel;
 import com.evist0.client.models.ProbabilityModel;
 import com.evist0.client.views.results.ResultsDialog;
@@ -331,6 +332,7 @@ public class AppView extends JFrame {
         if (e.getID() == WindowEvent.WINDOW_CLOSING) {
             try {
                 _model.save();
+                Client.disconnect();
             } catch (Exception exception) {
                 exception.printStackTrace();
             }

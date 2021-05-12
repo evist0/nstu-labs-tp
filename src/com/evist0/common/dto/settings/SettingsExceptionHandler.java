@@ -15,10 +15,10 @@ public class SettingsExceptionHandler {
 
     public void handleException(SettingsException exception) {
         switch (exception.getExceptionField()) {
-            case N1 -> _model.setN1(1L);
-            case N2 -> _model.setN2(1L);
-            case IndividualTtl -> _model.setIndividualTtl(1L);
-            case CompanyTtl -> _model.setCompanyTtl(1L);
+            case N1 -> _model.setN1(1L, true);
+            case N2 -> _model.setN2(1L, true);
+            case IndividualTtl -> _model.setIndividualTtl(1L, true);
+            case CompanyTtl -> _model.setCompanyTtl(1L, true);
         }
     }
 

@@ -48,17 +48,17 @@ public class ConsoleView extends JFrame {
 
         return Result.fromValue(sb.toString(), remainder);
     };
-    private static final Parser<Command> connectParser = Parser.then(Parser.then(Parser.then(Parser.match("connect"), Parser.match(' ')), Parser.ignore(Character::isSpaceChar)), Parser.pipe(ipParser, value -> Parser.value(model -> {
+    private final Parser<Command> connectParser = Parser.then(Parser.then(Parser.then(Parser.match("connect"), Parser.match(' ')), Parser.ignore(Character::isSpaceChar)), Parser.pipe(ipParser, value -> Parser.value(model -> {
         try {
-            Client.connect(model, InetAddress.getByName(value), 1337);
+            Client.connect(this, model, InetAddress.getByName(value), 1337);
         } catch (IOException e) {
-            e.printStackTrace();
+            this.print("Failed to connect");
         }
 
-        return null;
+        return "";
     })));
 
-    private static final Parser<Command> commandParser = Parser.either(getCommandParser, connectParser);
+    private final Parser<Command> commandParser = Parser.either(getCommandParser, connectParser);
 
     public ConsoleView(AppModel appModel) {
         super("Взлом жопы");
@@ -72,6 +72,10 @@ public class ConsoleView extends JFrame {
         setDefaultCloseOperation(HIDE_ON_CLOSE);
 
         __initActionListeners();
+    }
+
+    public void print(String message) {
+        outputArea.append(message + '\n');
     }
 
     private void __initActionListeners() {

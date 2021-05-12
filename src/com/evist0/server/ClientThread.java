@@ -24,7 +24,7 @@ public class ClientThread extends Thread {
 
             printUsers();
 
-            String serverMessage = "New user connected: " + clientSocket.getInetAddress();
+            String serverMessage = "[print]New user connected " + clientSocket.getInetAddress();
             server.broadcast(serverMessage, this);
 
             String clientMessage;
@@ -33,35 +33,37 @@ public class ClientThread extends Thread {
                 clientMessage = reader.readLine();
                 System.out.println(clientMessage);
                 server.broadcast(clientMessage, this);
-            } while (!clientMessage.equals("bye"));
+            } while (!clientMessage.equals("[disconnect]"));
 
             server.removeUser(this);
             clientSocket.close();
 
-            serverMessage = clientSocket.getInetAddress() + " has quitted.";
-            server.broadcast(serverMessage, this);
-
         } catch (IOException ex) {
-            System.out.println("Error in UserThread: " + ex.getMessage());
             ex.printStackTrace();
         }
     }
 
     void printUsers() {
-        if (server.hasUsers()) {
-            writer.println("Connected users:\n");
+        StringBuilder sb = new StringBuilder();
+
+        if (!server.isEmpty()) {
+            sb.append("[print]Connected users: ");
 
             var threads = server.getClientThreads();
 
             threads.forEach(thread -> {
                 if (thread != this) {
                     var clientSocket = thread.getClientSocket();
-                    writer.println(clientSocket.getInetAddress() + "\n");
+                    sb.append(clientSocket.getInetAddress()).append(",");
                 }
             });
+
+            sb.append("\n");
         } else {
-            writer.println("No other users connected");
+            sb.append("[print]No other users connected");
         }
+
+        writer.println(sb);
     }
 
     void sendMessage(String message) {

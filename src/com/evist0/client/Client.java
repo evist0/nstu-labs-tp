@@ -1,6 +1,7 @@
 package com.evist0.client;
 
 import com.evist0.client.models.AppModel;
+import com.evist0.client.views.console.ConsoleView;
 import com.evist0.common.properties.Property;
 
 import java.io.*;
@@ -14,16 +15,15 @@ public class Client {
 
     private final Socket server;
     private final PrintWriter output;
-    private final AppModel model;
 
-    private Client(AppModel model, InetAddress inetAddress, int port) throws IOException {
-        this.model = model;
+    private Client(ConsoleView console, AppModel model, InetAddress inetAddress, int port) throws IOException {
+
         server = new Socket(inetAddress, port);
 
         var outputStream = server.getOutputStream();
         output = new PrintWriter(outputStream, true);
 
-        output.println("Connected");
+        output.println("[connect]");
 
         ExecutorService readThread = Executors.newSingleThreadExecutor();
 
@@ -36,6 +36,10 @@ public class Client {
                 while (!server.isClosed()) {
                     String received = reader.readLine();
 
+                    if (received.startsWith("[print]")) {
+                        String message = received.substring(7);
+                        console.print(message);
+                    }
                     if (received.startsWith("[set]")) {
                         String setCommand = received.substring(5);
 
@@ -43,20 +47,18 @@ public class Client {
                         String value = setCommand.split(" ")[1];
 
                         switch (property) {
-                            case N1 -> model.setN1(Long.parseLong(value));
-                            case N2 -> model.setN2(Long.parseLong(value));
-                            case P1 -> model.setP1(Float.parseFloat(value));
-                            case P2 -> model.setP2(Float.parseFloat(value));
-                            case IndividualTtl -> model.setIndividualTtl(Long.valueOf(value));
-                            case CompanyTtl -> model.setCompanyTtl(Long.valueOf(value));
-                            case TimerVisibility -> model.setTimerVisible(Boolean.parseBoolean(value));
-                            case ResultsVisibility -> model.setDialogVisible(Boolean.parseBoolean(value));
-                            case IndividualMove -> model.setIndividualMove(Boolean.parseBoolean(value));
-                            case CompanyMove -> model.setCompanyMove(Boolean.parseBoolean(value));
+                            case N1 -> model.setN1(Long.parseLong(value), false);
+                            case N2 -> model.setN2(Long.parseLong(value), false);
+                            case P1 -> model.setP1(Float.parseFloat(value), false);
+                            case P2 -> model.setP2(Float.parseFloat(value), false);
+                            case IndividualTtl -> model.setIndividualTtl(Long.valueOf(value), false);
+                            case CompanyTtl -> model.setCompanyTtl(Long.valueOf(value), false);
+                            case TimerVisibility -> model.setTimerVisible(Boolean.parseBoolean(value), false);
+                            case ResultsVisibility -> model.setDialogVisible(Boolean.parseBoolean(value), false);
+                            case IndividualMove -> model.setIndividualMove(Boolean.parseBoolean(value), false);
+                            case CompanyMove -> model.setCompanyMove(Boolean.parseBoolean(value), false);
                         }
                     }
-
-                    System.out.println(received);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -64,23 +66,23 @@ public class Client {
         });
     }
 
-    public static Client connect(AppModel model, InetAddress inetAddress, int port) throws IOException {
+    public static void connect(ConsoleView console, AppModel model, InetAddress inetAddress, int port) throws IOException {
         if (instance == null) {
-            instance = new Client(model, inetAddress, port);
+            instance = new Client(console, model, inetAddress, port);
+        }
+    }
+
+    public static Client getInstance() {
+        return instance;
+    }
+
+    public static void disconnect() throws IOException {
+        if (instance == null) {
+            return;
         }
 
-        return instance;
-    }
-
-    public static Client getInstance()
-    {
-        return instance;
-    }
-
-    public void disconnect() throws IOException {
-        output.println("Disconnected");
-
-        server.close();
+        instance.sendMessage("[disconnect]");
+        instance.server.close();
 
         instance = null;
     }
