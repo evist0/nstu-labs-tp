@@ -1,18 +1,21 @@
 package com.evist0.common.dto.taxpayers;
 
+import com.evist0.common.moveSystem.MoveTask;
 import com.evist0.common.moveSystem.Vector2d;
 
 import java.awt.image.BufferedImage;
 
 public class TaxpayerDTOBuilder {
     private Vector2d _position;
-    private BufferedImage _image;
+    private int _imageVariant;
 
     private Long _timestamp;
     private Long _ttl;
 
     private Vector2d _destination;
     private float _speed;
+
+    private MoveTask _moveTask;
 
     public TaxpayerDTOBuilder() {
     }
@@ -23,9 +26,8 @@ public class TaxpayerDTOBuilder {
         return this;
     }
 
-    public TaxpayerDTOBuilder setImage(BufferedImage image) {
-        _image = image;
-
+    public TaxpayerDTOBuilder setImageVariant(int imageVariant) {
+        _imageVariant = imageVariant;
         return this;
     }
 
@@ -47,7 +49,12 @@ public class TaxpayerDTOBuilder {
         return this;
     }
 
+    public TaxpayerDTOBuilder setMoveTask(MoveTask moveTask) {
+        _moveTask = moveTask;
+        return this;
+    }
+
     public TaxpayerDTO build() {
-        return new TaxpayerDTO(_timestamp, _ttl, _position, _image, _destination, _speed);
+        return new TaxpayerDTO(_timestamp, _ttl, _position, _destination, _speed, _imageVariant, _moveTask);
     }
 }

@@ -55,6 +55,11 @@ public class AppView extends JFrame {
     private JCheckBox individualMoveCheckBox;
     private JCheckBox companyMoveCheckBox;
 
+    private JButton saveDbButton;
+    private JButton loadDbButton;
+    private JCheckBox saveIndividualCheckbox;
+    private JCheckBox saveCompanyCheckbox;
+
     public void showErrorMessage(String message) {
         JOptionPane.showMessageDialog(this,
                 message,
@@ -189,6 +194,10 @@ public class AppView extends JFrame {
         hideTimerRadioButton.addActionListener(e -> controller.setTimerVisible(false));
 
         startButton.addActionListener(e -> onStart());
+
+        saveDbButton.addActionListener(e -> controller.saveObjectsDatabase(saveIndividualCheckbox.isSelected(), saveCompanyCheckbox.isSelected()));
+
+        loadDbButton.addActionListener(e -> controller.loadObjectsDatabase());
     }
 
     private void _initModelChangeListeners() {

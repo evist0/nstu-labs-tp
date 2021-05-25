@@ -23,17 +23,19 @@ public class IndividualTaxpayer extends Entity {
         counter++;
     }
 
-    public static BufferedImage getRandomImage() {
+    public static BufferedImage getImage(int id) {
         BufferedImage image = null;
-        var _r = new Random();
-        var imageIdx = _r.nextInt(4);
-
         try {
-            image = ImageIO.read(_images[imageIdx]);
+            image = ImageIO.read(_images[id]);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         return image;
+    }
+
+    public static int getRandomImageId() {
+        var _r = new Random();
+        return _r.nextInt(4);
     }
 }

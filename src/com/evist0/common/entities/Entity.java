@@ -13,7 +13,7 @@ import java.util.UUID;
 public abstract class Entity implements Serializable {
     private UUID _id;
 
-    private BufferedImage _image;
+    private int _imageVariant;
 
     private Vector2d _position;
     private MoveTask _moveTask;
@@ -23,20 +23,25 @@ public abstract class Entity implements Serializable {
 
     Entity(TaxpayerDTO dto) {
         _id = UUID.randomUUID();
-
+        _imageVariant = dto.imageVariant;
         _timestamp = dto.timestamp;
         _ttl = dto.ttl;
 
         _position = dto.position;
-        _image = dto.image;
 
-        this.moveTo(dto.destination, dto.speed);
+        if (dto.moveTask == null) {
+            this.moveTo(dto.destination, dto.speed);
+        } else {
+            this._moveTask = dto.moveTask;
+        }
     }
 
     public void draw(Graphics g) {
         var point = _position.toPoint();
 
-        g.drawImage(_image, point.x, point.y, null);
+        var image = this instanceof IndividualTaxpayer ? IndividualTaxpayer.getImage(_imageVariant) : CompanyTaxpayer.getImage(_imageVariant);
+
+        g.drawImage(image, point.x, point.y, null);
     }
 
     public UUID getId() {
@@ -102,6 +107,18 @@ public abstract class Entity implements Serializable {
         return _ttl;
     }
 
+    public int getImageVariant() {
+        return _imageVariant;
+    }
+
+    public Vector2d getPosition() {
+        return _position;
+    }
+
+    public MoveTask getMoveTask() {
+        return _moveTask;
+    }
+
     @Serial
     private void writeObject(ObjectOutputStream stream) throws IOException {
         stream.writeObject(_id);
@@ -109,7 +126,7 @@ public abstract class Entity implements Serializable {
         stream.writeObject(_moveTask);
         stream.writeObject(_timestamp);
         stream.writeObject(_ttl);
-        ImageIO.write(_image, "png", stream);
+        stream.writeInt(_imageVariant);
     }
 
     @Serial
@@ -119,6 +136,6 @@ public abstract class Entity implements Serializable {
         _moveTask = (MoveTask) stream.readObject();
         _timestamp = (Long) stream.readObject();
         _ttl = (Long) stream.readObject();
-        _image = ImageIO.read(stream);
+        _imageVariant = stream.readInt();
     }
 }

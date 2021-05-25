@@ -11,6 +11,7 @@ import com.evist0.common.simulation.middlewares.FactoryMiddleware;
 import com.evist0.common.simulation.middlewares.MoveMiddleware;
 import com.evist0.common.factories.TaxpayerFactory;
 
+import javax.xml.crypto.Data;
 import java.awt.*;
 import java.io.*;
 import java.util.Vector;
@@ -19,6 +20,7 @@ public class AppController {
     private final AppModel _model;
     private final Simulation _simulation;
 
+    private Database _database;
     private final ConsoleView _console;
 
     public AppController(AppModel model) {
@@ -30,6 +32,12 @@ public class AppController {
                 .use(new MoveMiddleware());
 
         _console = new ConsoleView(model);
+
+        try {
+            _database = new Database(model);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     private void setModel(SettingsDTO dto) {
@@ -153,6 +161,14 @@ public class AppController {
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
+    }
+
+    public void saveObjectsDatabase(boolean individual, boolean company) {
+        this._database.saveEntities(individual, company);
+    }
+
+    public void loadObjectsDatabase() {
+        this._database.loadEntities();
     }
 
     public void toggleConsole() {

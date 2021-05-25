@@ -16,7 +16,9 @@ public class TaxpayerFactory {
         var availableArea = model.getAvailableArea();
 
         var position = getRandomPoint(availableArea);
-        var image = IndividualTaxpayer.getRandomImage();
+        var imageId = IndividualTaxpayer.getRandomImageId();
+
+        var image = IndividualTaxpayer.getImage(imageId);
 
         var destination = getRandomPoint(new Rectangle(
                 (int) (availableArea.getWidth() / 2),
@@ -30,7 +32,7 @@ public class TaxpayerFactory {
                 .setTimestamp(timestamp)
                 .setTtl(ttl)
                 .setPosition(position)
-                .setImage(image)
+                .setImageVariant(imageId)
                 .setMoveTo(destination, speed)
                 .build();
 
@@ -44,7 +46,9 @@ public class TaxpayerFactory {
         var availableArea = model.getAvailableArea();
 
         var position = getRandomPoint(availableArea);
-        var image = CompanyTaxpayer.getRandomImage();
+        var imageId = CompanyTaxpayer.getRandomImageId();
+
+        var image = CompanyTaxpayer.getImage(imageId);
 
         var destination = getRandomPoint(new Rectangle(0, 0,
                 availableArea.width / 2 - image.getWidth(),
@@ -55,7 +59,7 @@ public class TaxpayerFactory {
                 .setTimestamp(timestamp)
                 .setTtl(ttl)
                 .setPosition(position)
-                .setImage(image)
+                .setImageVariant(imageId)
                 .setMoveTo(destination, speed)
                 .build();
 
